@@ -1,0 +1,123 @@
+body {
+  width: 70%;
+  margin:auto;
+  margin-top: 80px;
+  font-family: 'Raleway', sans-serif;
+  color: #333333;
+}
+
+img {
+  height: 35px;
+  width: 35px;
+}
+
+.font-orange {
+  color: #ff9900;
+  float: left;
+}
+
+#underline {
+  border-bottom-style: solid;
+  border-width: 5px;
+  border-bottom-color:#333333;
+  color: #ff9900;
+  float: left;
+}
+
+h1 {
+  margin: 0;
+  font-family: 'Sanchez', serif;
+  font-size: 5em;
+}
+
+h2 {
+  margin: 14px 0 0 0;
+  font-family: 'Sanchez', serif;
+}
+
+h3{
+  margin: 7px 0 0 0;
+  font-family: 'Sanchez', serif;
+}
+
+#logo-group {
+  float: right;
+  display: inline;
+  margin: -155px 0;
+}
+
+.logo {
+  margin: 6px 0;
+}
+
+/* For logo adjustments: */
+@media only screen and (max-width: 810px) {
+  #logo-group {
+    float: left;
+    display: flex;
+    margin: 10px 0;
+  }
+
+  .logo {
+    margin: 0 6px;
+  }
+
+  h1 {
+    line-height: 125%;
+  }
+}
+
+
+
+/* For mobile phones: */
+@media only screen and (max-width: 500px) {
+  body {
+    width: 85%;
+    margin: 20px auto;
+  }
+
+  img {
+    height: 30px;
+    width: 30px;
+  }
+
+  .font-orange {
+    color: #ff9900;
+    font-size: 37px;
+    margin-top: 80%;
+  }
+
+  #underline {
+    border-bottom-style: solid;
+    border-width: 5px;
+    border-bottom-color:#333333;
+    color: #ff9900;
+    float: left;
+  }
+
+  h1 {
+    font-family: 'Sanchez', serif;
+    font-size: 4em;
+    line-height: 125%;
+  }
+
+  h2 {
+    margin: 0;
+    font-family: 'Sanchez', serif;
+  }
+
+  h3{
+    margin: 10% 0 0 0;
+    font-family: 'Sanchez', serif;
+  }
+
+  #logo-group {
+    float: left;
+    display: flex;
+    margin: 10px 0;
+  }
+
+  .logo {
+    margin: 0 6px;
+  }
+}
