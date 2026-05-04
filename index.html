@@ -187,27 +187,44 @@
       return d;
     }
 
-    // Returns { glyphDs, width, height }
-    // One SVG path string per non-space glyph, positioned correctly.
-    function buildGlyphPaths(font, text, fontSize) {
-      const scale = fontSize / font.unitsPerEm;
+    // Returns { glyphs: [{maskD, sweepD, strokeW}], totalWidth, totalH }
+    // maskD  — filled glyph outline used as SVG <mask> (white fill)
+    // sweepD — horizontal line through bounding-box centre; animated via stroke-dashoffset
+    // strokeW — stroke-width wide enough to fill the full glyph height
+    // The mask clips the sweeping stroke to the exact letterform — so the ink
+    // "fills into" the letter shape rather than tracing its edge.
+    let _gtId = 0;
+    function buildGlyphMasks(font, text, fontSize) {
+      const scale    = fontSize / font.unitsPerEm;
       const baseline = font.ascender * scale;
-      const height = (font.ascender - font.descender) * scale;
-      const glyphs = font.stringToGlyphs(text);
-      const glyphDs = [];
+      const totalH   = (font.ascender - font.descender) * scale;
+      const list     = font.stringToGlyphs(text);
+      const glyphs   = [];
       let x = 0;
-      for (let i = 0; i < glyphs.length; i++) {
-        const g = glyphs[i];
-        const kern = i < glyphs.length - 1
-          ? (font.getKerningValue(g, glyphs[i + 1]) || 0) * scale : 0;
+      for (let i = 0; i < list.length; i++) {
+        const g    = list[i];
+        const kern = i < list.length - 1
+          ? (font.getKerningValue(g, list[i + 1]) || 0) * scale : 0;
+        const gw   = (g.advanceWidth || 0) * scale;
         if (g.unicode !== 32) {
-          const p = g.getPath(x, baseline, fontSize);
-          const d = cmdsToD(p.commands);
-          if (d) glyphDs.push(d);
+          // Filled outline → mask
+          const maskD = cmdsToD(g.getPath(x, baseline, fontSize).commands);
+          // Bounding box in SVG coords (y-axis is flipped vs font units)
+          const bb   = g.getBoundingBox();
+          const bby1 = baseline - bb.y2 * scale;   // top  (SVG y)
+          const bby2 = baseline - bb.y1 * scale;   // bottom (SVG y)
+          const bbx1 = x + bb.x1 * scale;
+          const bbx2 = x + bb.x2 * scale;
+          const bbH  = bby2 - bby1;
+          const bbCY = (bby1 + bby2) * 0.5;
+          // Horizontal sweep line — stroke-width covers full glyph height + margin
+          const sweepD  = `M${(bbx1 - 3).toFixed(1)},${bbCY.toFixed(1)} L${(bbx2 + 3).toFixed(1)},${bbCY.toFixed(1)}`;
+          const strokeW = bbH * 1.5;
+          if (maskD) glyphs.push({ maskD, sweepD, strokeW });
         }
-        x += (g.advanceWidth || 0) * scale + kern;
+        x += gw + kern;
       }
-      return { glyphDs, width: x, height };
+      return { glyphs, totalWidth: x, totalH };
     }
 
     // ── runTrace: animate a mounted SVG's [data-g] paths ───────────────────────
@@ -257,6 +274,7 @@
       const svgRef       = React.useRef(null);
       const triggered    = React.useRef(false);
       const [glyphData, setGlyphData] = React.useState(null);
+      const uid = React.useMemo(() => 'g' + (_gtId++), []);
       // 'hidden'  — font loading
       // 'ready'   — font loaded, waiting for trigger
       // 'tracing' — stroke-dashoffset animation running
@@ -266,7 +284,7 @@
 
       React.useEffect(() => {
         loadCaveatFont()
-          .then(font => { setGlyphData(buildGlyphPaths(font, text, fontSize)); setPhase('ready'); })
+          .then(font => { setGlyphData(buildGlyphMasks(font, text, fontSize)); setPhase('ready'); })
           .catch(() => setPhase('done'));
       }, [text, fontSize]);
 
@@ -327,24 +345,33 @@
         );
       }
 
-      const { glyphDs, width, height } = glyphData;
+      const { glyphs, totalWidth, totalH } = glyphData;
       return (
         <span ref={containerRef} className={className}
           style={{ position: 'relative', display: 'inline-block', ...style }}>
           {/* SVG glyph trace — provides the layout dimensions during animation */}
           <svg ref={svgRef}
-            viewBox={`0 0 ${width.toFixed(1)} ${height.toFixed(1)}`}
-            width={width} height={height}
+            viewBox={`0 0 ${totalWidth.toFixed(1)} ${totalH.toFixed(1)}`}
+            width={totalWidth} height={totalH}
             style={{
               display: 'block', overflow: 'visible',
               opacity: phase === 'fading' ? 0 : 1,
               transition: phase === 'fading' ? `opacity ${FADE_MS}ms ease` : 'none',
             }}
           >
-            {glyphDs.map((d, i) => (
-              <path key={i} data-g="1" d={d}
-                fill="none" stroke={strokeColor} strokeWidth={strokeWidth}
-                strokeLinecap="round" strokeLinejoin="round" />
+            <defs>
+              {glyphs.map((g, i) => (
+                <mask key={i} id={`${uid}-${i}`} maskUnits="userSpaceOnUse">
+                  <path d={g.maskD} fill="white" />
+                </mask>
+              ))}
+            </defs>
+            {glyphs.map((g, i) => (
+              <path key={i} data-g="1" d={g.sweepD}
+                fill="none" stroke={strokeColor} strokeWidth={g.strokeW}
+                strokeLinecap="butt"
+                mask={`url(#${uid}-${i})`}
+              />
             ))}
           </svg>
           {/* Resolved text — absolutely positioned over SVG, fades in during crossfade */}
@@ -371,10 +398,11 @@
       const [glyphData, setGlyphData] = React.useState(null);
       const [phase, setPhase] = React.useState('hidden');
       const strokeColor = dark ? '#f5f0e8' : '#333333';
+      const uid = React.useMemo(() => 'g' + (_gtId++), []);
 
       React.useEffect(() => {
         loadCaveatFont()
-          .then(font => { setGlyphData(buildGlyphPaths(font, text, 36)); setPhase('ready'); })
+          .then(font => { setGlyphData(buildGlyphMasks(font, text, 36)); setPhase('ready'); })
           .catch(() => setPhase('done'));
       }, [text]);
 
@@ -421,19 +449,28 @@
           {/* SVG trace — absolutely overlays the h2 during animation */}
           {glyphData && (phase === 'tracing' || phase === 'fading') && (
             <svg ref={svgRef}
-              viewBox={`0 0 ${glyphData.width.toFixed(1)} ${glyphData.height.toFixed(1)}`}
+              viewBox={`0 0 ${glyphData.totalWidth.toFixed(1)} ${glyphData.totalH.toFixed(1)}`}
               style={{
                 position: 'absolute', top: 0, left: 0,
-                width: glyphData.width, height: glyphData.height,
+                width: glyphData.totalWidth, height: glyphData.totalH,
                 overflow: 'visible',
                 opacity: svgOpacity,
                 transition: phase === 'fading' ? `opacity ${FADE_MS}ms ease` : 'none',
               }}
             >
-              {glyphData.glyphDs.map((d, i) => (
-                <path key={i} data-g="1" d={d}
-                  fill="none" stroke={strokeColor} strokeWidth={2}
-                  strokeLinecap="round" strokeLinejoin="round" />
+              <defs>
+                {glyphData.glyphs.map((g, i) => (
+                  <mask key={i} id={`${uid}-${i}`} maskUnits="userSpaceOnUse">
+                    <path d={g.maskD} fill="white" />
+                  </mask>
+                ))}
+              </defs>
+              {glyphData.glyphs.map((g, i) => (
+                <path key={i} data-g="1" d={g.sweepD}
+                  fill="none" stroke={strokeColor} strokeWidth={g.strokeW}
+                  strokeLinecap="butt"
+                  mask={`url(#${uid}-${i})`}
+                />
               ))}
             </svg>
           )}
@@ -458,11 +495,13 @@
       const [stage, setStage] = React.useState('idle');
       const color = dark ? '#f5f0e8' : '#333333';
       const isDraftWriting = draft === 'Writing';
+      const draftUid = React.useMemo(() => 'g' + (_gtId++), []);
+      const finalUid = React.useMemo(() => 'g' + (_gtId++), []);
 
       React.useEffect(() => {
         loadCaveatFont().then(font => {
-          setDraftGD(buildGlyphPaths(font, draft, 36));
-          setFinalGD(buildGlyphPaths(font, final, 36));
+          setDraftGD(buildGlyphMasks(font, draft, 36));
+          setFinalGD(buildGlyphMasks(font, final, 36));
         }).catch(() => setStage('done'));
       }, [draft, final]);
 
@@ -570,19 +609,28 @@
             {/* Draft SVG trace — overlays h2 */}
             {draftGD && stage !== 'idle' && stage !== 'drafted' && stage !== 'striking' && stage !== 'struck' && (
               <svg ref={draftSvgRef}
-                viewBox={`0 0 ${draftGD.width.toFixed(1)} ${draftGD.height.toFixed(1)}`}
+                viewBox={`0 0 ${draftGD.totalWidth.toFixed(1)} ${draftGD.totalH.toFixed(1)}`}
                 style={{
                   position: 'absolute', top: 0, left: 0,
-                  width: draftGD.width, height: draftGD.height,
+                  width: draftGD.totalWidth, height: draftGD.totalH,
                   overflow: 'visible',
                   opacity: draftSvgOpacity,
                   transition: stage === 'fading-draft' ? `opacity ${FADE_MS}ms ease` : 'none',
                 }}
               >
-                {draftGD.glyphDs.map((d, i) => (
-                  <path key={i} data-g="1" d={d}
-                    fill="none" stroke={color} strokeWidth={2}
-                    strokeLinecap="round" strokeLinejoin="round" />
+                <defs>
+                  {draftGD.glyphs.map((g, i) => (
+                    <mask key={i} id={`${draftUid}-${i}`} maskUnits="userSpaceOnUse">
+                      <path d={g.maskD} fill="white" />
+                    </mask>
+                  ))}
+                </defs>
+                {draftGD.glyphs.map((g, i) => (
+                  <path key={i} data-g="1" d={g.sweepD}
+                    fill="none" stroke={color} strokeWidth={g.strokeW}
+                    strokeLinecap="butt"
+                    mask={`url(#${draftUid}-${i})`}
+                  />
                 ))}
               </svg>
             )}
@@ -620,19 +668,28 @@
               </h2>
               {finalGD && stage !== 'done' && (
                 <svg ref={finalSvgRef}
-                  viewBox={`0 0 ${finalGD.width.toFixed(1)} ${finalGD.height.toFixed(1)}`}
+                  viewBox={`0 0 ${finalGD.totalWidth.toFixed(1)} ${finalGD.totalH.toFixed(1)}`}
                   style={{
                     position: 'absolute', top: 0, left: 0,
-                    width: finalGD.width, height: finalGD.height,
+                    width: finalGD.totalWidth, height: finalGD.totalH,
                     overflow: 'visible',
                     opacity: finalSvgOpacity,
                     transition: stage === 'fading-final' ? `opacity ${FADE_MS}ms ease` : 'none',
                   }}
                 >
-                  {finalGD.glyphDs.map((d, i) => (
-                    <path key={i} data-g="1" d={d}
-                      fill="none" stroke={color} strokeWidth={2}
-                      strokeLinecap="round" strokeLinejoin="round" />
+                  <defs>
+                    {finalGD.glyphs.map((g, i) => (
+                      <mask key={i} id={`${finalUid}-${i}`} maskUnits="userSpaceOnUse">
+                        <path d={g.maskD} fill="white" />
+                      </mask>
+                    ))}
+                  </defs>
+                  {finalGD.glyphs.map((g, i) => (
+                    <path key={i} data-g="1" d={g.sweepD}
+                      fill="none" stroke={color} strokeWidth={g.strokeW}
+                      strokeLinecap="butt"
+                      mask={`url(#${finalUid}-${i})`}
+                    />
                   ))}
                 </svg>
               )}
