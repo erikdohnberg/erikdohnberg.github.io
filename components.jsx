@@ -833,7 +833,7 @@ const SubstackModal = ({ onClose }) => {
           <>
             <p style={{ fontFamily: "'Sanchez', serif", fontSize: '22px', color: '#333', marginBottom: '8px' }}>Get the posts</p>
             <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: '15px', color: '#666', lineHeight: 1.6, marginBottom: '24px' }}>
-              Notes on product, AI, and leadership. No cadence commitment — I post when I have something worth saying.
+              Drop your email and I'll send each post when it goes live. No digests, no roundups, no nudges to upgrade.
             </p>
             <form onSubmit={handleSubmit}>
               <input
@@ -863,9 +863,6 @@ const SubstackModal = ({ onClose }) => {
                 {status === 'submitting' ? 'Subscribing…' : 'Subscribe'}
               </button>
             </form>
-            <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: '12px', color: '#aaa', marginTop: '14px', textAlign: 'center' }}>
-              Powered by Substack. Unsubscribe any time.
-            </p>
           </>
         )}
       </div>
