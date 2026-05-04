@@ -138,9 +138,24 @@
 
     @media (max-width: 768px) {
       .annotation-note { display: none !important; }
-      header { padding: 0 6vw !important; }
-      .section { padding-left: 6vw !important; padding-right: 6vw !important; }
+      header { padding: 0 clamp(24px, 7vw, 48px) !important; }
+      .section {
+        padding-left: clamp(24px, 7vw, 48px) !important;
+        padding-right: clamp(24px, 7vw, 48px) !important;
+        padding-top: 80px !important;
+        padding-bottom: 80px !important;
+      }
+      .project-card { padding: 24px !important; }
       .proud-carousel-grid { grid-template-columns: 1fr !important; gap: 32px !important; }
+    }
+    @media (max-width: 480px) {
+      header { padding: 0 24px !important; }
+      .section {
+        padding-left: 24px !important;
+        padding-right: 24px !important;
+        padding-top: 64px !important;
+        padding-bottom: 64px !important;
+      }
     }
   </style>
 </head>
