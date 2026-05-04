@@ -884,21 +884,6 @@ const Writing = () => {
       <p className="body-text body-text-dark" style={{ marginBottom: '32px', marginTop: '8px' }}>
         Most of what I know I learned from other people in the tech scene. This is me trying to pay it forward. Notes on product, AI, leadership, and the parts of the work that don't fit neatly into a roadmap. New posts land on Substack.
       </p>
-      <div style={{ marginBottom: '48px' }}>
-        <button onClick={() => setShowModal(true)} style={{
-          fontFamily: "'Raleway', sans-serif", fontSize: '15px', fontWeight: 600,
-          padding: '13px 28px', borderRadius: '4px',
-          border: '1px solid #ff9900', background: 'transparent',
-          color: '#ff9900', cursor: 'pointer', letterSpacing: '0.03em',
-          transition: 'background 0.2s, color 0.2s',
-        }}
-          onMouseEnter={e => { e.currentTarget.style.background = '#ff9900'; e.currentTarget.style.color = '#fff'; }}
-          onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#ff9900'; }}
-        >
-          Subscribe on Substack
-        </button>
-        {showModal && <SubstackModal onClose={() => setShowModal(false)} />}
-      </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
         {[
           {
@@ -923,6 +908,21 @@ const Writing = () => {
             <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: '15px', color: '#9a958d', margin: 0, lineHeight: 1.5 }}>{card.desc}</p>
           </div>
         ))}
+      </div>
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '24px' }}>
+        <button onClick={() => setShowModal(true)} style={{
+          fontFamily: "'Raleway', sans-serif", fontSize: '15px', fontWeight: 600,
+          padding: '11px 24px', borderRadius: '4px',
+          border: '1px solid #ff9900', background: 'transparent',
+          color: '#ff9900', cursor: 'pointer', letterSpacing: '0.03em',
+          transition: 'background 0.2s, color 0.2s',
+        }}
+          onMouseEnter={e => { e.currentTarget.style.background = '#ff9900'; e.currentTarget.style.color = '#fff'; }}
+          onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#ff9900'; }}
+        >
+          Subscribe on Substack
+        </button>
+        {showModal && <SubstackModal onClose={() => setShowModal(false)} />}
       </div>
     </div>
   </FadeSection>
