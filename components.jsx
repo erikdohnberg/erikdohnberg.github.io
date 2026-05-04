@@ -761,17 +761,144 @@ const About = () => (
   </FadeSection>
 );
 
+// ── SubstackModal ─────────────────────────────────────────────────────────────
+const SubstackModal = ({ onClose }) => {
+  const [email, setEmail] = React.useState('');
+  const [status, setStatus] = React.useState('idle'); // idle | submitting | done | error
+
+  // Close on Escape or backdrop click
+  React.useEffect(() => {
+    const onKey = e => { if (e.key === 'Escape') onClose(); };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [onClose]);
+
+  // Prevent body scroll while open
+  React.useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = ''; };
+  }, []);
+
+  const handleSubmit = e => {
+    e.preventDefault();
+    if (!email || status === 'submitting') return;
+    setStatus('submitting');
+    // Submit to Substack's free-subscribe endpoint via a hidden form POST
+    // Opens confirmation in a new tab; we show a "check your inbox" state
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = 'https://heyerikd.substack.com/api/v1/free';
+    form.target = '_blank';
+    form.style.display = 'none';
+    const field = document.createElement('input');
+    field.name = 'email'; field.value = email;
+    form.appendChild(field);
+    document.body.appendChild(form);
+    form.submit();
+    document.body.removeChild(form);
+    setStatus('done');
+  };
+
+  return ReactDOM.createPortal(
+    <div
+      onClick={e => { if (e.target === e.currentTarget) onClose(); }}
+      style={{
+        position: 'fixed', inset: 0, zIndex: 200,
+        background: 'rgba(15,13,11,0.72)',
+        backdropFilter: 'blur(4px)', WebkitBackdropFilter: 'blur(4px)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        padding: '20px',
+      }}
+    >
+      <div style={{
+        background: '#fff', borderRadius: '6px', padding: '40px',
+        width: '100%', maxWidth: '420px', position: 'relative',
+        boxShadow: '0 24px 60px rgba(0,0,0,0.28)',
+      }}>
+        {/* Close */}
+        <button onClick={onClose} aria-label="Close" style={{
+          position: 'absolute', top: '16px', right: '16px',
+          background: 'none', border: 'none', cursor: 'pointer',
+          color: '#aaa', fontSize: '20px', lineHeight: 1, padding: '4px',
+        }}>✕</button>
+
+        {status === 'done' ? (
+          <>
+            <p style={{ fontFamily: "'Caveat', cursive", fontSize: '28px', color: '#ff9900', marginBottom: '10px' }}>check your inbox</p>
+            <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: '15px', color: '#666', lineHeight: 1.6 }}>
+              Substack just sent you a confirmation email. Click the link in it and you're in.
+            </p>
+          </>
+        ) : (
+          <>
+            <p style={{ fontFamily: "'Sanchez', serif", fontSize: '22px', color: '#333', marginBottom: '8px' }}>Get the posts</p>
+            <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: '15px', color: '#666', lineHeight: 1.6, marginBottom: '24px' }}>
+              Notes on product, AI, and leadership. No cadence commitment — I post when I have something worth saying.
+            </p>
+            <form onSubmit={handleSubmit}>
+              <input
+                type="email" required
+                placeholder="your@email.com"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                style={{
+                  display: 'block', width: '100%',
+                  fontFamily: "'Raleway', sans-serif", fontSize: '16px',
+                  padding: '12px 14px', marginBottom: '12px',
+                  border: '1px solid #ddd', borderRadius: '4px',
+                  outline: 'none', color: '#333',
+                  boxSizing: 'border-box',
+                }}
+                onFocus={e => e.target.style.borderColor = '#ff9900'}
+                onBlur={e => e.target.style.borderColor = '#ddd'}
+              />
+              <button type="submit" style={{
+                display: 'block', width: '100%',
+                fontFamily: "'Raleway', sans-serif", fontSize: '15px', fontWeight: 600,
+                padding: '13px', borderRadius: '4px', border: 'none',
+                background: '#ff9900', color: '#fff', cursor: 'pointer',
+                letterSpacing: '0.03em',
+                opacity: status === 'submitting' ? 0.7 : 1,
+              }}>
+                {status === 'submitting' ? 'Subscribing…' : 'Subscribe'}
+              </button>
+            </form>
+            <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: '12px', color: '#aaa', marginTop: '14px', textAlign: 'center' }}>
+              Powered by Substack. Unsubscribe any time.
+            </p>
+          </>
+        )}
+      </div>
+    </div>,
+    document.body
+  );
+};
+
 // ── Writing ───────────────────────────────────────────────────────────────────
-const Writing = () => (
+const Writing = () => {
+  const [showModal, setShowModal] = React.useState(false);
+  return (
   <FadeSection id="writing" className="section section-dark" data-dark-section="true" style={{ padding: '120px 32px' }}>
     <div style={{ maxWidth: '640px', margin: '0 auto' }} data-dark-section="true">
       <IteratedTitle draft="Writing" final="Things I think about" dark={true} />
-      <p className="body-text body-text-dark" style={{ marginBottom: '40px', marginTop: '8px' }}>
+      <p className="body-text body-text-dark" style={{ marginBottom: '32px', marginTop: '8px' }}>
         Most of what I know I learned from other people in the tech scene. This is me trying to pay it forward. Notes on product, AI, leadership, and the parts of the work that don't fit neatly into a roadmap. New posts land on Substack.
       </p>
-      <p className="body-text body-text-dark" style={{ marginBottom: '32px' }}>
-        <a href="https://substack.com/@heyerikd" target="_blank" rel="noopener" className="inline-link inline-link-dark">substack.com/@heyerikd</a>
-      </p>
+      <div style={{ marginBottom: '48px' }}>
+        <button onClick={() => setShowModal(true)} style={{
+          fontFamily: "'Raleway', sans-serif", fontSize: '15px', fontWeight: 600,
+          padding: '13px 28px', borderRadius: '4px',
+          border: '1px solid #ff9900', background: 'transparent',
+          color: '#ff9900', cursor: 'pointer', letterSpacing: '0.03em',
+          transition: 'background 0.2s, color 0.2s',
+        }}
+          onMouseEnter={e => { e.currentTarget.style.background = '#ff9900'; e.currentTarget.style.color = '#fff'; }}
+          onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#ff9900'; }}
+        >
+          Subscribe on Substack
+        </button>
+        {showModal && <SubstackModal onClose={() => setShowModal(false)} />}
+      </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
         {[
           {
@@ -799,7 +926,8 @@ const Writing = () => (
       </div>
     </div>
   </FadeSection>
-);
+  );
+};
 
 // ── Side Projects ─────────────────────────────────────────────────────────────
 const SideProjects = () => (
