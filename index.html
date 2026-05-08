@@ -4,6 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Erik Dohnberg — Senior PM, Toronto</title>
+  <meta name="description" content="Senior PM based in Toronto. Building AI-powered products since 2023. LLM integrations, evaluation frameworks, ML-powered features at scale.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://erikdohnberg.com">
+  <meta property="og:title" content="Erik Dohnberg — Senior PM, Toronto">
+  <meta property="og:description" content="Senior PM based in Toronto. Building AI-powered products since 2023. LLM integrations, evaluation frameworks, ML-powered features at scale.">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Erik Dohnberg — Senior PM, Toronto">
+  <meta name="twitter:description" content="Senior PM based in Toronto. Building AI-powered products since 2023.">
   <!--
        __
       /  \___
@@ -38,7 +46,7 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
-    body { background: #fff; color: #333; font-family: 'Raleway', sans-serif; font-size: 17px; line-height: 1.7; overflow-x: hidden; }
+    body { background: #fdfcf8; color: #333; font-family: 'Raleway', sans-serif; font-size: 17px; line-height: 1.7; overflow-x: hidden; }
     ::selection { background: rgba(255,153,0,0.25); }
 
     @keyframes bounceDown { 0%,100%{transform:translateY(0)} 50%{transform:translateY(6px)} }
@@ -79,6 +87,7 @@
     .section-header {
       font-family: 'Sanchez', serif; font-size: 36px; color: #333;
       margin-bottom: 0; position: relative; display: inline-block;
+      letter-spacing: -0.01em; text-wrap: balance;
     }
     .section-header::after {
       content: ''; display: block; width: 44px; height: 3px;
@@ -113,7 +122,7 @@
     .writing-card:hover { border-color: #ff9900; }
     .writing-card-dark { border: 1px solid rgba(245,240,232,.12); background: rgba(245,240,232,.02); transition: border-color .3s, background .3s; }
     .writing-card-dark:hover { border-color: rgba(255,153,0,.6); background: rgba(255,153,0,.04); }
-    .project-card { padding: 36px; border: 1px solid #eee; border-radius: 4px; background: #fff; }
+    .project-card { padding: 36px; border: 1px solid rgba(180,150,100,.14); border-radius: 4px; background: #fff; box-shadow: 0 2px 16px rgba(160,120,60,.07); }
 
     .carousel-btn {
       width: 44px; height: 44px; border-radius: 50%;
@@ -132,6 +141,13 @@
     .topbar-icon:hover { color: #ff9900 !important; background: rgba(255,153,0,.08); }
 
     .annotation-note { pointer-events: none; }
+
+    /* Active/press feedback */
+    button:active { transform: scale(0.97); }
+    .carousel-btn:active { transform: scale(0.97) !important; }
+
+    /* Focus ring */
+    :focus-visible { outline: 2px solid #ff9900; outline-offset: 3px; }
 
     /* Traced section header wrapper — provides the margin-bottom spacing */
     .traced-header-wrap { display: inline-block; position: relative; margin-bottom: 28px; }

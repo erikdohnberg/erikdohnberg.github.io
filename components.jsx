@@ -558,7 +558,7 @@ const Hero = () => {
   }, [erikSettled]);
 
   return (
-    <header style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '0 10vw', position: 'relative' }}>
+    <header style={{ minHeight: '100dvh', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '0 10vw', position: 'relative' }}>
       <div style={{ maxWidth: '800px', width: '100%' }}>
 
         {/* "Hi, I'm" */}
@@ -680,7 +680,7 @@ const FloatingUI = () => {
     <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} aria-label="Scroll to top" className="floating-icon scroll-top-btn"
       style={{ position: 'fixed', bottom: '28px', right: '28px', width: '40px', height: '40px', border: 'none',
         background: overDark ? 'rgba(31,29,27,.85)' : 'rgba(255,255,255,.85)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)',
-        borderRadius: '50%', cursor: 'pointer', color: overDark ? '#f5f0e8' : '#333', boxShadow: '0 2px 12px rgba(0,0,0,.12)',
+        borderRadius: '50%', cursor: 'pointer', color: overDark ? '#f5f0e8' : '#333', boxShadow: '0 2px 12px rgba(20,14,5,.14)',
         opacity: showScrollTop ? 1 : 0, pointerEvents: showScrollTop ? 'auto' : 'none',
         transition: 'opacity .3s,color .3s,background .3s', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }}>
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -813,7 +813,7 @@ const SubstackModal = ({ onClose }) => {
       <div style={{
         background: '#fff', borderRadius: '6px', padding: '40px',
         width: '100%', maxWidth: '420px', position: 'relative',
-        boxShadow: '0 24px 60px rgba(0,0,0,0.28)',
+        boxShadow: '0 24px 60px rgba(20,14,5,0.26), 0 4px 12px rgba(20,14,5,0.1)',
       }}>
         {/* Close */}
         <button onClick={onClose} aria-label="Close" style={{
@@ -1047,8 +1047,8 @@ const ProudWork = () => {
               background: '#fff',
               borderRadius: '6px',
               overflow: 'hidden',
-              boxShadow: '0 18px 40px rgba(0,0,0,0.14), 0 4px 10px rgba(0,0,0,0.08)',
-              border: '1px solid rgba(0,0,0,0.06)',
+              boxShadow: '0 18px 40px rgba(20,14,5,0.12), 0 4px 10px rgba(20,14,5,0.07)',
+              border: '1px solid rgba(180,150,100,0.1)',
             }}>
               <ProjectScreenshot kind={project.screenshot} accent={project.accent} />
             </div>
