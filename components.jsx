@@ -367,7 +367,7 @@ const SideNotedSpan = ({ children, text, seed = 1, color = '#ff9900', side = 'au
             transform: visible ? 'rotate(-2deg)' : 'translateY(6px) rotate(-2deg)',
             transformOrigin: pos.sideUsed === 'right' || pos.placement === 'below' ? 'left center' : 'right center',
             textAlign: pos.placement === 'below' ? 'left' : (pos.sideUsed === 'right' ? 'left' : 'right'),
-            transition: 'opacity 0.5s ease 0.9s, transform 0.5s ease 0.9s',
+            transition: `opacity 0.5s ${EASE_OUT_STRONG} 0.9s, transform 0.5s ${EASE_OUT_STRONG} 0.9s`,
           }}>{text}</span>
         </div>,
         document.body
@@ -398,10 +398,10 @@ const Annotation = ({ type, text, delay = 0, seed = 1, children, color = '#ff990
         <svg viewBox="0 0 200 80" style={{ position: 'absolute', top: '-22px', left: '-17px', width: 'calc(100% + 34px)', height: 'calc(100% + 44px)', pointerEvents: 'none', overflow: 'visible' }}>
           <path d={d1} fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
             strokeDasharray={len} strokeDashoffset={visible ? 0 : len}
-            style={{ transition: 'stroke-dashoffset 0.7s cubic-bezier(0.4,0.1,0.6,0.9)', transform: 'rotate(-2deg)', transformOrigin: 'center', opacity: .9 }} />
+            style={{ transition: 'stroke-dashoffset 0.7s cubic-bezier(0.23, 1, 0.32, 1)', transform: 'rotate(-2deg)', transformOrigin: 'center', opacity: .9 }} />
           <path d={d2} fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
             strokeDasharray={len} strokeDashoffset={visible ? 0 : len}
-            style={{ transition: 'stroke-dashoffset 0.7s cubic-bezier(0.4,0.1,0.6,0.9) 0.2s', transform: 'rotate(-1.5deg)', transformOrigin: 'center', opacity: .55 }} />
+            style={{ transition: 'stroke-dashoffset 0.7s cubic-bezier(0.23, 1, 0.32, 1) 0.2s', transform: 'rotate(-1.5deg)', transformOrigin: 'center', opacity: .55 }} />
         </svg>
         {text && <span className="annotation-note" style={{ ...ns, position: 'absolute', top: '-44px', right: '-130px', opacity: visible ? 1 : 0, transform: visible ? 'translateY(0) rotate(-3deg)' : 'translateY(8px) rotate(-3deg)', transition: 'opacity 0.5s ease 0.7s, transform 0.5s ease 0.7s' }}>
           {text} <span style={{ display: 'inline-block', transform: 'rotate(45deg)' }}>↙</span>
@@ -418,7 +418,7 @@ const Annotation = ({ type, text, delay = 0, seed = 1, children, color = '#ff990
           <svg viewBox="0 0 200 12" preserveAspectRatio="none" style={{ position: 'absolute', bottom: '-6px', left: '0', width: '100%', height: '10px', pointerEvents: 'none' }}>
             <path d={d} fill="none" stroke={color} strokeWidth="2.2" strokeLinecap="round"
               strokeDasharray="220" strokeDashoffset={visible ? 0 : 220}
-              style={{ transition: 'stroke-dashoffset 0.55s cubic-bezier(0.4,0.1,0.6,0.9)' }} />
+              style={{ transition: 'stroke-dashoffset 0.55s cubic-bezier(0.23, 1, 0.32, 1)' }} />
           </svg>
         </span>
       </SideNotedSpan>
@@ -435,10 +435,10 @@ const Annotation = ({ type, text, delay = 0, seed = 1, children, color = '#ff990
           style={{ position: 'absolute', bottom: '-8px', left: '0', width: '100%', height: '14px', pointerEvents: 'none' }}>
           <path d={d1} fill="none" stroke={color} strokeWidth="2" strokeLinecap="round"
             strokeDasharray="220" strokeDashoffset={visible ? 0 : 220}
-            style={{ transition: 'stroke-dashoffset 0.55s cubic-bezier(0.4,0.1,0.6,0.9)' }} />
+            style={{ transition: 'stroke-dashoffset 0.55s cubic-bezier(0.23, 1, 0.32, 1)' }} />
           <path d={d2} fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round"
             strokeDasharray="220" strokeDashoffset={visible ? 0 : 220}
-            style={{ transition: 'stroke-dashoffset 0.55s cubic-bezier(0.4,0.1,0.6,0.9) 0.12s' }}
+            style={{ transition: 'stroke-dashoffset 0.55s cubic-bezier(0.23, 1, 0.32, 1) 0.12s' }}
             transform="translate(0,5)" />
         </svg>
       </span>
@@ -454,6 +454,7 @@ const Annotation = ({ type, text, delay = 0, seed = 1, children, color = '#ff990
 };
 
 // ── FadeSection ─────────────────────────────────────────────────────────────
+const EASE_OUT_STRONG = 'cubic-bezier(0.23, 1, 0.32, 1)';
 const FadeSection = ({ children, className, style, id, 'data-dark-section': dataDark }) => {
   const ref = React.useRef(null);
   const [visible, setVisible] = React.useState(false);
@@ -462,9 +463,13 @@ const FadeSection = ({ children, className, style, id, 'data-dark-section': data
     const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setVisible(true); obs.disconnect(); } }, { threshold: .1 });
     obs.observe(ref.current); return () => obs.disconnect();
   }, []);
+  // Respect prefers-reduced-motion: skip translateY, shorten duration
+  const motion = REDUCED_MOTION
+    ? { opacity: visible ? 1 : 0, transition: 'opacity 0.2s ease-out' }
+    : { opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(30px)', transition: `opacity 0.5s ${EASE_OUT_STRONG}, transform 0.5s ${EASE_OUT_STRONG}` };
   return (
     <section ref={ref} id={id} className={className} data-dark-section={dataDark}
-      style={{ ...style, opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(30px)', transition: 'opacity 0.7s ease, transform 0.7s ease' }}>
+      style={{ ...style, ...motion }}>
       {children}
     </section>
   );
@@ -643,7 +648,7 @@ const Hero = () => {
           display: 'flex', gap: '20px', marginTop: '40px',
           opacity: stage >= 5 ? 1 : 0,
           transform: stage >= 5 ? 'translateY(0)' : 'translateY(8px)',
-          transition: 'opacity 0.6s ease 0.3s, transform 0.6s ease 0.3s',
+          transition: `opacity 0.6s ${EASE_OUT_STRONG} 0.3s, transform 0.6s ${EASE_OUT_STRONG} 0.3s`,
         }}>
           <a href="https://linkedin.com/in/erikdohnberg" target="_blank" rel="noopener" className="hero-link">LinkedIn ↗</a>
           <a href="https://substack.com/@heyerikd" target="_blank" rel="noopener" className="hero-link">Substack ↗</a>
@@ -765,6 +770,8 @@ const About = () => (
 const SubstackModal = ({ onClose }) => {
   const [email, setEmail] = React.useState('');
   const [status, setStatus] = React.useState('idle'); // idle | submitting | done | error
+  const [mounted, setMounted] = React.useState(false);
+  React.useEffect(() => { const t = requestAnimationFrame(() => setMounted(true)); return () => cancelAnimationFrame(t); }, []);
 
   // Close on Escape or backdrop click
   React.useEffect(() => {
@@ -814,6 +821,9 @@ const SubstackModal = ({ onClose }) => {
         background: '#fff', borderRadius: '6px', padding: '40px',
         width: '100%', maxWidth: '420px', position: 'relative',
         boxShadow: '0 24px 60px rgba(20,14,5,0.26), 0 4px 12px rgba(20,14,5,0.1)',
+        opacity: mounted ? 1 : 0,
+        transform: mounted ? 'scale(1)' : 'scale(0.95)',
+        transition: `opacity 0.28s ${EASE_OUT_STRONG}, transform 0.28s ${EASE_OUT_STRONG}`,
       }}>
         {/* Close */}
         <button onClick={onClose} aria-label="Close" style={{
@@ -859,6 +869,7 @@ const SubstackModal = ({ onClose }) => {
                 background: '#ff9900', color: '#fff', cursor: 'pointer',
                 letterSpacing: '0.03em',
                 opacity: status === 'submitting' ? 0.7 : 1,
+                transition: 'opacity 0.15s ease-out',
               }}>
                 {status === 'submitting' ? 'Subscribing…' : 'Subscribe'}
               </button>
@@ -907,16 +918,7 @@ const Writing = () => {
         ))}
       </div>
       <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '24px' }}>
-        <button onClick={() => setShowModal(true)} style={{
-          fontFamily: "'Raleway', sans-serif", fontSize: '15px', fontWeight: 600,
-          padding: '11px 24px', borderRadius: '4px',
-          border: '1px solid #ff9900', background: 'transparent',
-          color: '#ff9900', cursor: 'pointer', letterSpacing: '0.03em',
-          transition: 'background 0.2s, color 0.2s',
-        }}
-          onMouseEnter={e => { e.currentTarget.style.background = '#ff9900'; e.currentTarget.style.color = '#fff'; }}
-          onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#ff9900'; }}
-        >
+        <button onClick={() => setShowModal(true)} className="substack-btn">
           Subscribe on Substack
         </button>
         {showModal && <SubstackModal onClose={() => setShowModal(false)} />}

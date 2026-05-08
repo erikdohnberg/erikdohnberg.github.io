@@ -99,27 +99,40 @@
     .body-text-dark { color: #d8d2c6; }
 
     .inline-link { color: #333; text-decoration: none; border-bottom: 1px solid #ff9900; transition: color .3s; }
-    .inline-link:hover { color: #ff9900; }
     .inline-link-dark { color: #f5f0e8; }
-    .inline-link-dark:hover { color: #ffb84d; }
-
     .hero-link { font-family: 'Raleway', sans-serif; font-size: 15px; font-weight: 500; color: #333; text-decoration: none; letter-spacing: .02em; transition: color .3s; }
-    .hero-link:hover { color: #ff9900; }
     .footer-link { color: #888; text-decoration: none; transition: color .3s; }
-    .footer-link:hover { color: #ff9900; }
-
     .floating-icon { transition: color .3s !important; text-decoration: none; }
-    .floating-icon:hover { color: #ff9900 !important; }
+    @media (hover: hover) and (pointer: fine) {
+      .inline-link:hover { color: #ff9900; }
+      .inline-link-dark:hover { color: #ffb84d; }
+      .hero-link:hover { color: #ff9900; }
+      .footer-link:hover { color: #ff9900; }
+      .floating-icon:hover { color: #ff9900 !important; }
+      .scroll-top-btn:hover::after { transform: translateX(-50%) scaleX(1); }
+    }
     .scroll-top-btn { position: relative; }
     .scroll-top-btn::after {
       content: ''; position: absolute; bottom: 4px; left: 50%;
       transform: translateX(-50%) scaleX(0); width: 20px; height: 2px;
       background: #ff9900; transition: transform .3s; transform-origin: center;
     }
-    .scroll-top-btn:hover::after { transform: translateX(-50%) scaleX(1); }
 
     .writing-card { padding: 22px 26px; border: 1px solid #eee; border-radius: 4px; transition: border-color .3s; }
-    .writing-card:hover { border-color: #ff9900; }
+    @media (hover: hover) and (pointer: fine) {
+      .writing-card:hover { border-color: #ff9900; }
+    }
+
+    .substack-btn {
+      font-family: 'Raleway', sans-serif; font-size: 15px; font-weight: 600;
+      padding: 11px 24px; border-radius: 4px;
+      border: 1px solid #ff9900; background: transparent;
+      color: #ff9900; cursor: pointer; letter-spacing: 0.03em;
+      transition: background 0.2s ease-out, color 0.2s ease-out;
+    }
+    @media (hover: hover) and (pointer: fine) {
+      .substack-btn:hover { background: #ff9900; color: #fff; }
+    }
     .writing-card-dark { border: 1px solid rgba(245,240,232,.12); background: rgba(245,240,232,.02); transition: border-color .3s, background .3s; }
     .writing-card-dark:hover { border-color: rgba(255,153,0,.6); background: rgba(255,153,0,.04); }
     .project-card { padding: 36px; border: 1px solid rgba(180,150,100,.14); border-radius: 4px; background: #fff; box-shadow: 0 2px 16px rgba(160,120,60,.07); }
