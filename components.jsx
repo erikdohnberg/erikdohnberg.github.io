@@ -337,7 +337,7 @@ const Writing = () => {
 
 // ── Side Projects ─────────────────────────────────────────────────────────────
 const SideProjects = () => (
-  <FadeSection id="projects" className="section section-light" style={{ padding: '120px 32px' }}>
+  <FadeSection id="projects" className="section section-paper" style={{ padding: '120px 32px' }}>
     <div style={{ maxWidth: '640px', margin: '0 auto' }}>
       <h2 className="section-header" style={{ marginBottom: '28px' }}>Side Projects</h2>
       <p className="body-text" style={{ marginBottom: '40px' }}>
@@ -400,7 +400,7 @@ const ProudWork = () => {
   const total = PROUD_WORK_PROJECTS.length;
   const project = PROUD_WORK_PROJECTS[idx];
   return (
-    <FadeSection id="proud" className="section section-paper" style={{ padding: '120px 32px' }}>
+    <FadeSection id="proud" className="section section-light" style={{ padding: '120px 32px' }}>
       <div style={{ maxWidth: '880px', margin: '0 auto' }}>
         <IteratedTitle draft="Selected Work" final="Some work I'm proud of" />
         <p className="body-text" style={{ marginBottom: '48px', marginTop: '8px', maxWidth: '640px' }}>
