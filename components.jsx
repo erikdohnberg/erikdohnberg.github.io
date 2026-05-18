@@ -402,29 +402,16 @@ const ProudWork = () => {
         <p className="body-text" style={{ marginBottom: '48px', marginTop: '8px', maxWidth: '640px' }}>
           A small selection. Real products that shipped, with real teams.
         </p>
-        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) minmax(0,1fr)', gap: '48px', alignItems: 'start' }} className="proud-carousel-grid">
-          {/* Screenshot */}
-          <div style={{ position: 'relative' }}>
-            <div key={idx + '-shot'} className="proud-shot" style={{
-              position: 'relative',
-              aspectRatio: '4 / 3',
-              background: '#fff',
-              borderRadius: '6px',
-              overflow: 'hidden',
-              boxShadow: '0 18px 40px rgba(20,14,5,0.12), 0 4px 10px rgba(20,14,5,0.07)',
-              border: '1px solid rgba(180,150,100,0.1)',
-            }}>
-              {/* TODO: Replace with <img> screenshot — see ProjectScreenshot comment above */}
-            </div>
-          </div>
-          {/* Text */}
-          <div key={idx + '-txt'} style={{ animation: 'txtIn 0.5s ease' }}>
-            <h3 style={{ fontFamily: "'Sanchez', serif", fontSize: '28px', color: '#333', margin: '0 0 6px' }}>{project.title}</h3>
-            <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: '15px', color: '#999', fontStyle: 'italic', margin: '0 0 22px' }}>{project.tagline}</p>
-            <p className="body-text" style={{ marginBottom: '20px' }}>{project.body}</p>
-            <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: '14px', color: '#888', margin: '0 0 16px', fontStyle: 'italic' }}>{project.role}</p>
-            <a href={project.link.href} target="_blank" rel="noopener" className="inline-link">{project.link.label}</a>
-          </div>
+        {/* TODO: Restore two-column grid (screenshot + text) once real screenshots are added.
+             Add: <div style={{ aspectRatio:'4/3', borderRadius:'6px', overflow:'hidden', boxShadow:'0 18px 40px rgba(20,14,5,0.12)' }}>
+                    <img src="images/<project>.png" alt="..." style={{ width:'100%', height:'100%', objectFit:'cover' }} />
+                  </div> */}
+        <div key={idx + '-txt'} style={{ maxWidth: '640px', animation: 'txtIn 0.5s ease' }}>
+          <h3 style={{ fontFamily: "'Sanchez', serif", fontSize: '28px', color: '#333', margin: '0 0 6px' }}>{project.title}</h3>
+          <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: '15px', color: '#999', fontStyle: 'italic', margin: '0 0 22px' }}>{project.tagline}</p>
+          <p className="body-text" style={{ marginBottom: '20px' }}>{project.body}</p>
+          <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: '14px', color: '#888', margin: '0 0 16px', fontStyle: 'italic' }}>{project.role}</p>
+          <a href={project.link.href} target="_blank" rel="noopener" className="inline-link">{project.link.label}</a>
         </div>
         {/* Carousel nav */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '24px', marginTop: '56px' }}>
