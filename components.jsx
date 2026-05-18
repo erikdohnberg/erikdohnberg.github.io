@@ -92,6 +92,13 @@ const Hero = () => {
           </span>
         </h1>
 
+        {/* Role */}
+        {stage >= 3 && (
+          <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: 'clamp(13px, 2.5vw, 15px)', color: '#888', letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: '28px', marginTop: '4px' }}>
+            Senior Product Manager · Toronto
+          </p>
+        )}
+
         {/* Tagline */}
         <div style={{ position: 'relative', maxWidth: '600px', minHeight: '90px' }}>
           {stage >= 3 && (
