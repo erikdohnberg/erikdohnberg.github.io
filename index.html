@@ -85,7 +85,7 @@
 
     /* Section headers — used only on the polished (resolved) h2 */
     .section-header {
-      font-family: 'Sanchez', serif; font-size: 36px; color: #333;
+      font-family: 'Sanchez', serif; font-size: clamp(24px, 6vw, 36px); color: #333;
       margin-bottom: 0; position: relative; display: inline-block;
       letter-spacing: -0.01em; text-wrap: balance;
     }
@@ -185,6 +185,8 @@
         padding-top: 64px !important;
         padding-bottom: 64px !important;
       }
+      .body-text { font-size: 16px; }
+      .footer-link { font-size: 16px; }
     }
   </style>
 </head>

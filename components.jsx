@@ -101,7 +101,7 @@ const Hero = () => {
             <div>
               <div style={{ lineHeight: 1.6, position: 'relative', display: 'inline-block' }}>
                 <HandwrittenReveal onComplete={() => setStage(4)}>
-                  <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: '20px', lineHeight: 1.6 }}>
+                  <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: 'clamp(16px, 4.5vw, 20px)', lineHeight: 1.6 }}>
                     Every industry thinks its problems are unique.
                   </span>
                 </HandwrittenReveal>
@@ -111,7 +111,7 @@ const Hero = () => {
                   <HandwrittenReveal text="They're mostly the same problems in a trenchcoat."
                     fontSize={20} strokeColor="#333333" stagger={28} glyphDuration={180}
                     trigger="load" startDelay={200} onComplete={() => setStage(5)}>
-                    <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: '20px', lineHeight: 1.6 }}>
+                    <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: 'clamp(16px, 4.5vw, 20px)', lineHeight: 1.6 }}>
                       They're mostly{' '}
                       <Annotation type="double-underline" text="" seed={5}>the same problems</Annotation>
                       {' '}in a <TrenchcoatWord />.
@@ -232,137 +232,41 @@ const About = () => (
     <div style={{ maxWidth: '640px', margin: '0 auto' }}>
       <h2 className="section-header" style={{ marginBottom: '28px' }}>About</h2>
       <p className="body-text" style={{ marginBottom: '24px' }}>
-        I'm a Senior PM based in Toronto. I've shipped products in multiple industries including social media, healthcare, heavily regulated supply-chain software, food operations software, and D2C retail. The contexts of each of these products look different. But the actual problems — user adoption, large competitor advantages, a heavy and uncertain regulatory environment, and constant prioritization under uncertainty — show up time and time again. Once you've seen the pattern enough times, you can focus on the craft of good product strategy and delivery.
+        I'm a Senior PM based in Toronto. I've shipped products in multiple industries including social media, healthcare, heavily regulated supply-chain software, food operations software, and D2C retail. The contexts look different, but <strong>the actual problems — user adoption, competitor pressure, regulatory fog, constant prioritization under uncertainty — show up time and time again.</strong> Once you've seen the pattern enough times, you can focus on the craft of good product strategy and delivery.
       </p>
-      <p className="body-text" style={{ marginBottom: '32px' }}>
-        I've been building AI-powered products since 2023 — ML-curated content feeds at 500px, as well as LLM-integrated decision tools and ML Forecasting Models for enterprise food operators. I'm outcome-driven, not output-driven. Code is cheaper than ever. What you choose to build is the whole game. I do my best work on small teams with clear ownership, leadership that's still close to the work, and a bias toward shipping.
+      <p className="body-text" style={{ marginBottom: '24px' }}>
+        I've been building AI-powered products since 2023 — ML-curated content feeds at 500px, LLM-integrated decision tools, and ML Forecasting Models for enterprise food operators. I'm <strong>outcome-driven, not output-driven.</strong> Code is cheaper than ever. <em>What you choose to build is the whole game.</em> I do my best work on small teams with clear ownership, leadership that's still close to the work, and a bias toward shipping.
       </p>
-      <p className="body-text" style={{ fontFamily: "'Sanchez', serif", fontSize: '20px', lineHeight: 1.5, paddingLeft: '24px', borderLeft: '3px solid #ff9900' }}>
-        The point isn't just shipping. It's making someone's day less painful — for the user, and for the team building it.
+      <p className="body-text">
+        The point isn't just shipping. It's <strong>making someone's day less painful</strong> — for the user, and for the team building it.
       </p>
     </div>
   </FadeSection>
 );
 
-// ── SubstackModal ─────────────────────────────────────────────────────────────
-const SubstackModal = ({ onClose }) => {
-  const [email, setEmail] = React.useState('');
-  const [status, setStatus] = React.useState('idle'); // idle | submitting | done | error
-  const [mounted, setMounted] = React.useState(false);
-  React.useEffect(() => { const t = requestAnimationFrame(() => setMounted(true)); return () => cancelAnimationFrame(t); }, []);
+// ── Writing ───────────────────────────────────────────────────────────────────
+const Writing = () => {
+  const [subEmail, setSubEmail] = React.useState('');
+  const [subStatus, setSubStatus] = React.useState('idle'); // idle | submitting | done
 
-  // Close on Escape or backdrop click
-  React.useEffect(() => {
-    const onKey = e => { if (e.key === 'Escape') onClose(); };
-    document.addEventListener('keydown', onKey);
-    return () => document.removeEventListener('keydown', onKey);
-  }, [onClose]);
-
-  // Prevent body scroll while open
-  React.useEffect(() => {
-    document.body.style.overflow = 'hidden';
-    return () => { document.body.style.overflow = ''; };
-  }, []);
-
-  const handleSubmit = e => {
+  const handleSubscribe = e => {
     e.preventDefault();
-    if (!email || status === 'submitting') return;
-    setStatus('submitting');
-    // Submit to Substack's free-subscribe endpoint via a hidden form POST
-    // Opens confirmation in a new tab; we show a "check your inbox" state
+    if (!subEmail || subStatus === 'submitting') return;
+    setSubStatus('submitting');
     const form = document.createElement('form');
     form.method = 'POST';
     form.action = 'https://heyerikd.substack.com/api/v1/free';
     form.target = '_blank';
     form.style.display = 'none';
     const field = document.createElement('input');
-    field.name = 'email'; field.value = email;
+    field.name = 'email'; field.value = subEmail;
     form.appendChild(field);
     document.body.appendChild(form);
     form.submit();
     document.body.removeChild(form);
-    setStatus('done');
+    setSubStatus('done');
   };
 
-  return ReactDOM.createPortal(
-    <div
-      onClick={e => { if (e.target === e.currentTarget) onClose(); }}
-      style={{
-        position: 'fixed', inset: 0, zIndex: 200,
-        background: 'rgba(15,13,11,0.72)',
-        backdropFilter: 'blur(4px)', WebkitBackdropFilter: 'blur(4px)',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        padding: '20px',
-      }}
-    >
-      <div style={{
-        background: '#fff', borderRadius: '6px', padding: '40px',
-        width: '100%', maxWidth: '420px', position: 'relative',
-        boxShadow: '0 24px 60px rgba(20,14,5,0.26), 0 4px 12px rgba(20,14,5,0.1)',
-        opacity: mounted ? 1 : 0,
-        transform: mounted ? 'scale(1)' : 'scale(0.95)',
-        transition: `opacity 0.28s ${EASE_OUT_STRONG}, transform 0.28s ${EASE_OUT_STRONG}`,
-      }}>
-        {/* Close */}
-        <button onClick={onClose} aria-label="Close" style={{
-          position: 'absolute', top: '16px', right: '16px',
-          background: 'none', border: 'none', cursor: 'pointer',
-          color: '#aaa', fontSize: '20px', lineHeight: 1, padding: '4px',
-        }}>✕</button>
-
-        {status === 'done' ? (
-          <>
-            <p style={{ fontFamily: "'Caveat', cursive", fontSize: '28px', color: '#ff9900', marginBottom: '10px' }}>check your inbox</p>
-            <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: '15px', color: '#666', lineHeight: 1.6 }}>
-              Substack just sent you a confirmation email. Click the link in it and you're in.
-            </p>
-          </>
-        ) : (
-          <>
-            <p style={{ fontFamily: "'Sanchez', serif", fontSize: '22px', color: '#333', marginBottom: '8px' }}>Get the posts</p>
-            <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: '15px', color: '#666', lineHeight: 1.6, marginBottom: '24px' }}>
-              Drop your email and I'll send each post when it goes live. No digests, no roundups, no nudges to upgrade.
-            </p>
-            <form onSubmit={handleSubmit}>
-              <input
-                type="email" required
-                placeholder="your@email.com"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                style={{
-                  display: 'block', width: '100%',
-                  fontFamily: "'Raleway', sans-serif", fontSize: '16px',
-                  padding: '12px 14px', marginBottom: '12px',
-                  border: '1px solid #ddd', borderRadius: '4px',
-                  outline: 'none', color: '#333',
-                  boxSizing: 'border-box',
-                }}
-                onFocus={e => e.target.style.borderColor = '#ff9900'}
-                onBlur={e => e.target.style.borderColor = '#ddd'}
-              />
-              <button type="submit" style={{
-                display: 'block', width: '100%',
-                fontFamily: "'Raleway', sans-serif", fontSize: '15px', fontWeight: 600,
-                padding: '13px', borderRadius: '4px', border: 'none',
-                background: '#ff9900', color: '#fff', cursor: 'pointer',
-                letterSpacing: '0.03em',
-                opacity: status === 'submitting' ? 0.7 : 1,
-                transition: 'opacity 0.15s ease-out',
-              }}>
-                {status === 'submitting' ? 'Subscribing…' : 'Subscribe'}
-              </button>
-            </form>
-          </>
-        )}
-      </div>
-    </div>,
-    document.body
-  );
-};
-
-// ── Writing ───────────────────────────────────────────────────────────────────
-const Writing = () => {
-  const [showModal, setShowModal] = React.useState(false);
   return (
   <FadeSection id="writing" className="section section-dark" data-dark-section="true" style={{ padding: '120px 32px' }}>
     <div style={{ maxWidth: '640px', margin: '0 auto' }} data-dark-section="true">
@@ -395,11 +299,32 @@ const Writing = () => {
           </div>
         ))}
       </div>
-      <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '24px' }}>
-        <button onClick={() => setShowModal(true)} className="substack-btn">
-          Subscribe on Substack
-        </button>
-        {showModal && <SubstackModal onClose={() => setShowModal(false)} />}
+      <div style={{ marginTop: '32px', borderTop: '1px solid rgba(245,240,232,.12)', paddingTop: '28px' }}>
+        {subStatus === 'done' ? (
+          <p style={{ fontFamily: "'Caveat', cursive", fontSize: '22px', color: '#ff9900', margin: 0 }}>
+            check your inbox ✓
+          </p>
+        ) : (
+          <>
+            <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: '15px', color: '#9a958d', marginBottom: '14px', marginTop: 0, lineHeight: 1.5 }}>
+              No digests, no roundups. New posts straight to your inbox.
+            </p>
+            <form onSubmit={handleSubscribe} style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+              <input type="email" required placeholder="your@email.com" value={subEmail}
+                onChange={e => setSubEmail(e.target.value)}
+                style={{ flex: '1 1 200px', fontFamily: "'Raleway', sans-serif", fontSize: '15px',
+                  padding: '11px 14px', border: '1px solid rgba(245,240,232,.2)', borderRadius: '4px',
+                  background: 'transparent', color: '#f5f0e8', outline: 'none', minWidth: '0',
+                  boxSizing: 'border-box' }}
+                onFocus={e => e.target.style.borderColor = '#ff9900'}
+                onBlur={e => e.target.style.borderColor = 'rgba(245,240,232,.2)'} />
+              <button type="submit" className="substack-btn"
+                style={{ opacity: subStatus === 'submitting' ? 0.7 : 1, flexShrink: 0 }}>
+                {subStatus === 'submitting' ? 'Subscribing…' : 'Subscribe'}
+              </button>
+            </form>
+          </>
+        )}
       </div>
     </div>
   </FadeSection>
@@ -595,14 +520,12 @@ const Footer = () => {
   return (
     <footer ref={ref} className="section section-light"
       style={{ padding: '100px 10vw 80px', textAlign: 'center', opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(20px)', transition: 'opacity .8s,transform .8s' }}>
-      <p style={{ fontFamily: "'Caveat', cursive", fontSize: '26px', color: '#333', marginBottom: '28px' }}>
+      <p style={{ fontFamily: "'Caveat', cursive", fontSize: 'clamp(20px, 5vw, 26px)', color: '#333', marginBottom: '28px' }}>
         Built in Toronto 🇨🇦, fuelled by espresso ☕️, and built with AI 🤖
       </p>
-      <div style={{ display: 'flex', justifyContent: 'center', gap: '24px', fontFamily: "'Raleway', sans-serif", fontSize: '14px' }}>
+      <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '12px 28px', fontFamily: "'Raleway', sans-serif", fontSize: '14px' }}>
         <a href="https://linkedin.com/in/erikdohnberg" target="_blank" rel="noopener" className="footer-link">LinkedIn</a>
-        <span style={{ color: '#ccc' }}>·</span>
         <a href="https://substack.com/@heyerikd" target="_blank" rel="noopener" className="footer-link">Substack</a>
-        <span style={{ color: '#ccc' }}>·</span>
         <a href="mailto:erikdohnberg@gmail.com" className="footer-link">erikdohnberg@gmail.com</a>
       </div>
     </footer>
