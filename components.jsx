@@ -355,48 +355,11 @@ const SideProjects = () => (
 );
 
 // ── ProjectScreenshot ─────────────────────────────────────────────────────────
-const ProjectScreenshot = ({ kind, accent }) => {
-  if (kind === 'galleries') return (
-    <svg viewBox="0 0 400 280" style={{ width: '100%', height: '100%', display: 'block' }}>
-      <rect width="400" height="280" fill="#1a1a1a" />
-      <rect x="16" y="16" width="120" height="160" fill="#3d4f5e" />
-      <rect x="16" y="16" width="120" height="160" fill="url(#g1)" opacity=".7" />
-      <rect x="144" y="16" width="120" height="160" fill="#5c4a3e" />
-      <rect x="144" y="16" width="120" height="160" fill="url(#g2)" opacity=".7" />
-      <rect x="272" y="16" width="112" height="160" fill="#7a6a52" />
-      <rect x="272" y="16" width="112" height="160" fill="url(#g3)" opacity=".7" />
-      <defs>
-        <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#7da3c0" /><stop offset="100%" stopColor="#2a3e4f" /></linearGradient>
-        <linearGradient id="g2" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#c89570" /><stop offset="100%" stopColor="#3d2a1e" /></linearGradient>
-        <linearGradient id="g3" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#d4b878" /><stop offset="100%" stopColor="#5a4a32" /></linearGradient>
-      </defs>
-      <text x="16" y="208" fill="#eaeaea" fontFamily="'Sanchez', serif" fontSize="18" fontWeight="600">Feeling Shady</text>
-      <text x="16" y="228" fill="#999" fontFamily="'Raleway', sans-serif" fontSize="11">Curated · 248 photos</text>
-      <rect x="16" y="248" width="60" height="20" rx="10" fill="none" stroke={accent} strokeWidth="1" />
-      <text x="46" y="262" fill={accent} fontFamily="'Raleway', sans-serif" fontSize="10" textAnchor="middle">Follow</text>
-    </svg>
-  );
-  if (kind === 'abby') return (
-    <svg viewBox="0 0 400 280" style={{ width: '100%', height: '100%', display: 'block' }}>
-      <rect width="400" height="280" fill="#fdf6ee" />
-      <ellipse cx="320" cy="100" rx="120" ry="80" fill="#f4dccb" opacity=".7" />
-      <ellipse cx="80" cy="220" rx="100" ry="60" fill="#e8c8a8" opacity=".5" />
-      <text x="24" y="40" fill="#3d2a1e" fontFamily="'Sanchez', serif" fontSize="22" fontWeight="600">hello, abby</text>
-      <text x="24" y="58" fill="#a08070" fontFamily="'Raleway', sans-serif" fontSize="11">contact lenses, made simple</text>
-      <rect x="24" y="80" width="160" height="170" rx="8" fill="#fff" stroke="#e8d8c8" />
-      <circle cx="104" cy="140" r="36" fill="#a8c8d8" opacity=".4" />
-      <circle cx="104" cy="140" r="20" fill="#5c8a9a" opacity=".3" />
-      <text x="40" y="200" fill="#3d2a1e" fontFamily="'Sanchez', serif" fontSize="14" fontWeight="600">Daily Comfort</text>
-      <text x="40" y="216" fill="#a08070" fontFamily="'Raleway', sans-serif" fontSize="10">30-day supply</text>
-      <text x="40" y="234" fill={accent} fontFamily="'Sanchez', serif" fontSize="16" fontWeight="600">$28.00</text>
-      <rect x="208" y="160" width="160" height="44" rx="22" fill={accent} />
-      <text x="288" y="187" fill="#fff" fontFamily="'Raleway', sans-serif" fontSize="13" fontWeight="600" textAnchor="middle">Order now</text>
-      <text x="208" y="100" fill="#3d2a1e" fontFamily="'Sanchez', serif" fontSize="20" fontWeight="600">Eyes feel good?</text>
-      <text x="208" y="124" fill="#a08070" fontFamily="'Raleway', sans-serif" fontSize="12">Then your lenses are working.</text>
-    </svg>
-  );
-  return null;
-};
+// TODO: Add real screenshots for each project in PROUD_WORK_PROJECTS.
+// Replace the placeholder container in ProudWork with:
+//   <img src="images/<project>.png" alt="<project title> screenshot"
+//        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+// Recommended capture: 1440×1080px (4:3), saved to /images/
 
 // ── Proud Work ────────────────────────────────────────────────────────────────
 const PROUD_WORK_PROJECTS = [
@@ -412,7 +375,6 @@ const PROUD_WORK_PROJECTS = [
     ),
     role: '— Senior PM at 500px, 2023.',
     link: { href: 'https://500px.com/explore', label: '→ Live' },
-    accent: '#5b8aa8', screenshot: 'galleries',
   },
   {
     title: 'Hello Abby',
@@ -428,7 +390,6 @@ const PROUD_WORK_PROJECTS = [
     ),
     role: '— Senior PM at Bounteous, 2022.',
     link: { href: 'https://helloabby.com', label: '→ helloabby.com' },
-    accent: '#d68a6a', screenshot: 'abby',
   },
 ];
 
@@ -455,7 +416,7 @@ const ProudWork = () => {
               boxShadow: '0 18px 40px rgba(20,14,5,0.12), 0 4px 10px rgba(20,14,5,0.07)',
               border: '1px solid rgba(180,150,100,0.1)',
             }}>
-              <ProjectScreenshot kind={project.screenshot} accent={project.accent} />
+              {/* TODO: Replace with <img> screenshot — see ProjectScreenshot comment above */}
             </div>
           </div>
           {/* Text */}
