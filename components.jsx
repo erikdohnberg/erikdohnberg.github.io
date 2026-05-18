@@ -343,9 +343,7 @@ const SideProjects = () => (
         <h3 style={{ fontFamily: "'Sanchez', serif", fontSize: '26px', color: '#333', margin: '0 0 4px' }}>Helm</h3>
         <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: '15px', color: '#999', fontStyle: 'italic', margin: '0 0 20px' }}>Keep strategy on course.</p>
         <p className="body-text" style={{ marginBottom: '20px' }}>
-          A work-in-progress experiment: an{' '}
-          <Annotation type="circle" text="yes, I'm building this" seed={9}>AI team member</Annotation>
-          {' '}that listens where strategy actually happens — meetings, Slack, planning conversations — and turns those signals into Outcome Charters. When alignment fades, Helm nudges teams to refocus.
+          A work-in-progress experiment: an AI that runs in the background of where strategy actually gets decided — meetings, Slack, planning docs — and distills those conversations into a clear, structured record of what the team is trying to achieve and why. When day-to-day decisions start drifting from that intent, Helm flags it.
         </p>
         <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: '14px', color: '#888', margin: '0 0 20px' }}>Early prototype, source-available. Nights-and-weekends pace.</p>
         <a href="https://github.com/erikdohnberg/helm" target="_blank" rel="noopener" className="inline-link">→ github.com/erikdohnberg/helm</a>
