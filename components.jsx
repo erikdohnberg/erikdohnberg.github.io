@@ -5,453 +5,29 @@ const REDUCED_MOTION = typeof window !== 'undefined' &&
   window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const FADE_MS = 360;
 
-// ── Font loading singleton ──────────────────────────────────────────────────
-const _fc = { font: null, promise: null };
-function loadCaveatFont() {
-  if (_fc.font) return Promise.resolve(_fc.font);
-  if (!_fc.promise) {
-    _fc.promise = fetch('/Caveat.woff')
-      .then(r => { if (!r.ok) throw new Error('font 404'); return r.arrayBuffer(); })
-      .then(buf => { _fc.font = opentype.parse(buf); return _fc.font; });
-  }
-  return _fc.promise;
-}
-loadCaveatFont();
-
-// ── Path utilities ──────────────────────────────────────────────────────────
-function cmdsToD(cmds) {
-  let d = '';
-  for (const c of cmds) {
-    switch (c.type) {
-      case 'M': d += `M${c.x.toFixed(1)},${c.y.toFixed(1)}`; break;
-      case 'L': d += `L${c.x.toFixed(1)},${c.y.toFixed(1)}`; break;
-      case 'C': d += `C${c.x1.toFixed(1)},${c.y1.toFixed(1)} ${c.x2.toFixed(1)},${c.y2.toFixed(1)} ${c.x.toFixed(1)},${c.y.toFixed(1)}`; break;
-      case 'Q': d += `Q${c.x1.toFixed(1)},${c.y1.toFixed(1)} ${c.x.toFixed(1)},${c.y.toFixed(1)}`; break;
-      case 'Z': d += 'Z'; break;
-    }
-  }
-  return d;
-}
-
-// Returns { glyphs: [{maskD, sweepD, strokeW}], totalWidth, totalH }
-let _gtId = 0;
-function buildGlyphMasks(font, text, fontSize) {
-  const scale    = fontSize / font.unitsPerEm;
-  const baseline = font.ascender * scale;
-  const totalH   = (font.ascender - font.descender) * scale;
-  const list     = font.stringToGlyphs(text);
-  const glyphs   = [];
-  let x = 0;
-  for (let i = 0; i < list.length; i++) {
-    const g    = list[i];
-    const kern = i < list.length - 1
-      ? (font.getKerningValue(g, list[i + 1]) || 0) * scale : 0;
-    const gw   = (g.advanceWidth || 0) * scale;
-    if (g.unicode !== 32) {
-      const maskD = cmdsToD(g.getPath(x, baseline, fontSize).commands);
-      const bb   = g.getBoundingBox();
-      const bby1 = baseline - bb.y2 * scale;
-      const bby2 = baseline - bb.y1 * scale;
-      const bbx1 = x + bb.x1 * scale;
-      const bbx2 = x + bb.x2 * scale;
-      const bbH  = bby2 - bby1;
-      const bbCY = (bby1 + bby2) * 0.5;
-      const sweepD  = `M${(bbx1 - 3).toFixed(1)},${bbCY.toFixed(1)} L${(bbx2 + 3).toFixed(1)},${bbCY.toFixed(1)}`;
-      const strokeW = bbH * 1.5;
-      if (maskD) glyphs.push({ maskD, sweepD, strokeW });
-    }
-    x += gw + kern;
-  }
-  return { glyphs, totalWidth: x, totalH };
-}
-
-// ── runTrace: animate a mounted SVG's [data-g] paths ───────────────────────
-function runTrace(svgEl, { stagger, glyphDuration }) {
-  const pathEls = Array.from(svgEl.querySelectorAll('[data-g]'));
-  if (!pathEls.length) return 0;
-  let maxEnd = 0;
-  pathEls.forEach((el, i) => {
-    const len = el.getTotalLength();
-    el.style.strokeDasharray = `${len}`;
-    el.style.strokeDashoffset = `${len}`;
-    const delay = i * stagger;
-    if (delay + glyphDuration > maxEnd) maxEnd = delay + glyphDuration;
-    el.animate(
-      [{ strokeDashoffset: `${len}` }, { strokeDashoffset: '0' }],
-      { duration: glyphDuration, easing: 'ease-out', delay, fill: 'forwards' }
-    );
-  });
-  return maxEnd;
-}
-
 // ── HandwrittenReveal ───────────────────────────────────────────────────────
-// Replaces GlyphTraceText. Stages: hidden → ready → tracing → fading → done
-// Key change: dur + 850ms beat before fading (was dur + 30)
-const HandwrittenReveal = ({
-  text,
-  fontSize,
-  strokeColor = '#333333',
-  stagger = 45,
-  glyphDuration = 280,
-  startDelay = 0,
-  trigger = 'load',
-  active = false,
-  onComplete,
-  children,
-  style = {},
-  className,
-}) => {
-  const containerRef = React.useRef(null);
-  const svgRef       = React.useRef(null);
-  const triggered    = React.useRef(false);
-  const onCompleteRef = React.useRef(onComplete);
-  React.useEffect(() => { onCompleteRef.current = onComplete; }, [onComplete]);
-  const [glyphData, setGlyphData] = React.useState(null);
-  const [phase, setPhase] = React.useState('hidden');
-  const uid = React.useMemo(() => 'g' + (_gtId++), []);
-
-  React.useEffect(() => {
-    loadCaveatFont()
-      .then(font => { setGlyphData(buildGlyphMasks(font, text, fontSize)); setPhase('ready'); })
-      .catch(() => setPhase('done'));
-  }, [text, fontSize]);
-
-  const startTrace = React.useCallback(() => {
-    if (triggered.current) return;
-    triggered.current = true;
-    if (REDUCED_MOTION) { setPhase('done'); onCompleteRef.current?.(); return; }
-    setTimeout(() => setPhase('tracing'), startDelay);
-  }, [startDelay]);
-
-  // load trigger
-  React.useEffect(() => {
-    if (trigger === 'load' && phase === 'ready') startTrace();
-  }, [trigger, phase, startTrace]);
-
-  // scroll trigger
-  React.useEffect(() => {
-    if (trigger !== 'scroll' || phase !== 'ready') return;
-    const el = containerRef.current; if (!el) return;
-    const obs = new IntersectionObserver(([e]) => {
-      if (e.isIntersecting) { startTrace(); obs.disconnect(); }
-    }, { threshold: 0.3 });
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, [trigger, phase, startTrace]);
-
-  // manual trigger
-  React.useEffect(() => {
-    if (trigger === 'manual' && active && phase === 'ready') startTrace();
-  }, [trigger, active, phase, startTrace]);
-
-  // run animation when entering 'tracing'
-  React.useEffect(() => {
-    if (phase !== 'tracing' || !svgRef.current || !glyphData) return;
-    const dur = runTrace(svgRef.current, { stagger, glyphDuration });
-    if (!dur) { setPhase('done'); onCompleteRef.current?.(); return; }
-    const t = setTimeout(() => {
-      setPhase('fading');
-      setTimeout(() => { setPhase('done'); onCompleteRef.current?.(); }, FADE_MS);
-    }, dur + 850); // 850ms beat — handwritten form sits before font resolves
-    return () => clearTimeout(t);
-  }, [phase, glyphData, stagger, glyphDuration]);
-
-  if (phase === 'hidden') return (
-    <span ref={containerRef} className={className} style={{ ...style, visibility: 'hidden' }}>{children}</span>
-  );
-  if (phase === 'done') return (
-    <span ref={containerRef} className={className} style={style}>{children}</span>
-  );
-
-  const { glyphs, totalWidth, totalH } = glyphData;
-  return (
-    <span ref={containerRef} className={className} style={{ position: 'relative', display: 'inline-block', ...style }}>
-      <svg ref={svgRef}
-        viewBox={`0 0 ${totalWidth.toFixed(1)} ${totalH.toFixed(1)}`}
-        width={totalWidth} height={totalH}
-        style={{
-          display: 'block', overflow: 'visible',
-          opacity: phase === 'fading' ? 0 : 1,
-          transition: phase === 'fading' ? `opacity ${FADE_MS}ms ease` : 'none',
-        }}
-      >
-        <defs>
-          {glyphs.map((g, i) => (
-            <mask key={i} id={`${uid}-${i}`} maskUnits="userSpaceOnUse">
-              <path d={g.maskD} fill="white" />
-            </mask>
-          ))}
-        </defs>
-        {glyphs.map((g, i) => (
-          <path key={i} data-g="1" d={g.sweepD}
-            fill="none" stroke={strokeColor} strokeWidth={g.strokeW}
-            strokeLinecap="butt" mask={`url(#${uid}-${i})`}
-          />
-        ))}
-      </svg>
-      <span style={{
-        position: 'absolute', top: 0, left: 0,
-        opacity: phase === 'fading' ? 1 : 0,
-        transition: `opacity ${FADE_MS}ms ease`,
-        pointerEvents: 'none', whiteSpace: 'nowrap',
-      }}>{children}</span>
-    </span>
-  );
+// Static stub: renders children immediately, fires onComplete so Hero stage-gates advance
+const HandwrittenReveal = ({ children, onComplete }) => {
+  const called = React.useRef(false);
+  React.useLayoutEffect(() => {
+    if (!called.current) { called.current = true; onComplete?.(); }
+  }, []);
+  return <>{children}</>;
 };
 
 // ── IteratedTitle ───────────────────────────────────────────────────────────
-// stage -1: idle (draft renders as normal h2, no animation)
-// On scroll: 750ms pause → stage 0 (strikethrough draws over draft)
-// stage 1: draft fades out, final writes in via HandwrittenReveal
-const IteratedTitle = ({ draft, final, dark = false }) => {
-  const wrapRef    = React.useRef(null);
-  const strikeRef  = React.useRef(null);
-  const triggered  = React.useRef(false);
-  const [stage, setStage] = React.useState(-1);
-  const color = dark ? '#f5f0e8' : '#333333';
-  const isDraftShort = draft.split(' ').length <= 2;
+// Static: renders the final title directly in Sanchez via section-header class
+const IteratedTitle = ({ final, dark = false }) => (
+  <div style={{ marginBottom: '28px' }}>
+    <h2 className={dark ? 'section-header section-header-dark' : 'section-header'}
+      style={{ display: 'inline-block', marginBottom: 0 }}>{final}</h2>
+  </div>
+);
 
-  // Scroll trigger
-  React.useEffect(() => {
-    if (stage !== -1) return;
-    const el = wrapRef.current; if (!el) return;
-    const obs = new IntersectionObserver(([e]) => {
-      if (e.isIntersecting && !triggered.current) {
-        triggered.current = true;
-        setTimeout(() => setStage(0), 750);
-        obs.disconnect();
-      }
-    }, { threshold: 0.1 });
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, [stage]);
-
-  // Animate strikethrough when stage=0
-  React.useEffect(() => {
-    if (stage !== 0 || !strikeRef.current) return;
-    const path = strikeRef.current.querySelector('[data-strike]');
-    if (!path) return;
-    const len = path.getTotalLength();
-    path.style.strokeDasharray = `${len}`;
-    path.style.strokeDashoffset = `${len}`;
-    path.animate(
-      [{ strokeDashoffset: `${len}` }, { strokeDashoffset: '0' }],
-      { duration: 600, easing: 'ease-out', fill: 'forwards' }
-    );
-    const t = setTimeout(() => setStage(1), 700);
-    return () => clearTimeout(t);
-  }, [stage]);
-
-  const draftVisible = stage <= 0;
-  const strikePath = isDraftShort
-    ? 'M 5 18 Q 30 14, 60 16 Q 90 18, 115 14'
-    : 'M 5 18 Q 50 14, 100 17 Q 150 19, 195 14';
-  const strikeVW = isDraftShort ? '0 0 120 30' : '0 0 200 30';
-
-  return (
-    <div ref={wrapRef} style={{ marginBottom: '28px' }}>
-      {/* Draft row */}
-      <div style={{
-        display: 'inline-block', position: 'relative',
-        opacity: draftVisible ? 1 : 0,
-        maxHeight: draftVisible ? '120px' : '0',
-        overflow: 'hidden',
-        transition: !draftVisible ? 'opacity 0.35s ease, max-height 0.45s ease 0.1s' : 'none',
-        marginBottom: draftVisible ? '6px' : 0,
-      }}>
-        <h2 className={dark ? 'section-header section-header-dark' : 'section-header'}
-          style={{ display: 'inline-block', marginBottom: 0 }}>{draft}</h2>
-        {stage >= 0 && (
-          <svg ref={strikeRef} viewBox={strikeVW}
-            style={{ position: 'absolute', top: '45%', left: '-4px', width: 'calc(100% + 8px)', height: '30px', overflow: 'visible', pointerEvents: 'none', transform: 'translateY(-2px)' }}>
-            <path data-strike="1" d={strikePath} fill="none" stroke="#ff9900" strokeWidth="3" strokeLinecap="round" />
-          </svg>
-        )}
-      </div>
-
-      {/* Final row */}
-      {stage >= 1 && (
-        <div style={{ display: 'inline-block' }}>
-          <HandwrittenReveal text={final} fontSize={36} strokeColor={color}
-            stagger={38} glyphDuration={240} trigger="load" startDelay={100}>
-            <h2 className={dark ? 'section-header section-header-dark' : 'section-header'}
-              style={{ display: 'inline-block', marginBottom: 0 }}>{final}</h2>
-          </HandwrittenReveal>
-        </div>
-      )}
-    </div>
-  );
-};
-
-// ── Sketchy path generators ─────────────────────────────────────────────────
-const sketchyEllipsePath = (cx, cy, rx, ry, seed = 1) => {
-  const rand = i => { const x = Math.sin(seed * 9999 + i * 17.3) * 10000; return (x - Math.floor(x)) - .5; };
-  const pts = 24;
-  let d1 = '', d2 = '';
-  for (let i = 0; i <= pts; i++) {
-    const t = (i / pts) * Math.PI * 2;
-    const w1 = 1 + rand(i) * .06;
-    d1 += (i === 0 ? 'M' : 'L') + (cx + Math.cos(t) * rx * w1 + rand(i + 100) * 2.5).toFixed(1) + ',' + (cy + Math.sin(t) * ry * w1 + rand(i + 200) * 2.5).toFixed(1) + ' ';
-    const t2 = t + .3, w2 = 1 + rand(i + 500) * .07;
-    d2 += (i === 0 ? 'M' : 'L') + (cx + Math.cos(t2) * (rx + 2) * w2 + rand(i + 600) * 3).toFixed(1) + ',' + (cy + Math.sin(t2) * (ry + 1) * w2 + rand(i + 700) * 3).toFixed(1) + ' ';
-  }
-  return { d1, d2 };
-};
-
-const sketchyUnderlinePath = (width, seed = 1) => {
-  const rand = i => { const x = Math.sin(seed * 7777 + i * 13.7) * 10000; return (x - Math.floor(x)) - .5; };
-  let d = '';
-  for (let i = 0; i <= 20; i++) { const x = (i / 20) * width, y = 4 + rand(i) * 3; d += (i === 0 ? 'M' : 'L') + x.toFixed(1) + ',' + y.toFixed(1) + ' '; }
-  return d;
-};
-
-// ── SideNotedSpan ───────────────────────────────────────────────────────────
-const SideNotedSpan = ({ children, text, seed = 1, color = '#ff9900', side = 'auto' }) => {
-  const targetRef = React.useRef(null);
-  const [visible, setVisible] = React.useState(false);
-  const [pos, setPos] = React.useState(null);
-
-  React.useEffect(() => {
-    const el = targetRef.current; if (!el) return;
-    const obs = new IntersectionObserver(([e]) => {
-      if (e.isIntersecting) { setTimeout(() => setVisible(true), 200); obs.disconnect(); }
-    }, { threshold: 0.4 });
-    obs.observe(el); return () => obs.disconnect();
-  }, []);
-
-  const measure = React.useCallback(() => {
-    const el = targetRef.current; if (!el) return;
-    const r = el.getBoundingClientRect();
-    const wordRect = { left: r.left, right: r.right, top: r.top, bottom: r.bottom, cx: r.left + r.width / 2, cy: r.top + r.height / 2 };
-    let colL = wordRect.left, colR = wordRect.right, walker = el.parentElement;
-    while (walker && walker !== document.body) {
-      const cs = window.getComputedStyle(walker), mw = parseFloat(cs.maxWidth);
-      if (!isNaN(mw) && mw > 0 && mw < window.innerWidth) { const wr = walker.getBoundingClientRect(); colL = wr.left; colR = wr.right; break; }
-      walker = walker.parentElement;
-    }
-    const vw = window.innerWidth, gR = vw - colR, gL = colL, NO = 28, MG = 140;
-    const nw = Math.min(180, Math.max(130, Math.max(gR, gL) - NO - 16));
-    let pref = side === 'auto' ? (wordRect.cx < (colL + colR) / 2 ? 'left' : 'right') : side;
-    let use = pref, pl = 'side';
-    if (pref === 'right' && gR < MG) { use = gL >= MG ? 'left' : 'right'; if (gL < MG) pl = 'below'; }
-    else if (pref === 'left' && gL < MG) { use = gR >= MG ? 'right' : 'left'; if (gR < MG) pl = 'below'; }
-    let nx, ny;
-    if (pl === 'side') {
-      if (use === 'right') { nx = colR + NO; ny = wordRect.cy - 18; if (nx + nw > vw - 12) nx = vw - nw - 12; }
-      else { nx = colL - NO - nw; ny = wordRect.cy - 18; if (nx < 12) nx = 12; }
-      setPos({ wordRect, noteX: nx, noteY: ny, sideUsed: use, placement: pl, noteWidth: nw });
-    } else {
-      const bw = Math.min(140, vw - 24); nx = wordRect.cx - bw / 2 + 50; ny = wordRect.bottom + 32;
-      if (nx + bw > vw - 12) nx = vw - bw - 12; if (nx < 12) nx = 12;
-      setPos({ wordRect, noteX: nx, noteY: ny, sideUsed: use, placement: pl, noteWidth: bw });
-    }
-  }, [side]);
-
-  React.useLayoutEffect(() => {
-    measure();
-    window.addEventListener('resize', measure);
-    window.addEventListener('scroll', measure, { passive: true });
-    const t = setTimeout(measure, 600);
-    return () => { window.removeEventListener('resize', measure); window.removeEventListener('scroll', measure); clearTimeout(t); };
-  }, [measure]);
-
-  return (
-    <>
-      <span ref={targetRef} style={{ position: 'relative', display: 'inline' }}>{children}</span>
-      {pos && ReactDOM.createPortal(
-        <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', pointerEvents: 'none', zIndex: 5 }}>
-          <span className="annotation-note" style={{
-            position: 'absolute', left: pos.noteX + 'px', top: pos.noteY + 'px', width: pos.noteWidth + 'px',
-            fontFamily: "'Caveat', cursive", fontSize: '24px', color, lineHeight: 1.15, pointerEvents: 'none',
-            opacity: visible ? 1 : 0,
-            transform: visible ? 'rotate(-2deg)' : 'translateY(6px) rotate(-2deg)',
-            transformOrigin: pos.sideUsed === 'right' || pos.placement === 'below' ? 'left center' : 'right center',
-            textAlign: pos.placement === 'below' ? 'left' : (pos.sideUsed === 'right' ? 'left' : 'right'),
-            transition: `opacity 0.5s ${EASE_OUT_STRONG} 0.9s, transform 0.5s ${EASE_OUT_STRONG} 0.9s`,
-          }}>{text}</span>
-        </div>,
-        document.body
-      )}
-    </>
-  );
-};
-
-// ── Annotation ──────────────────────────────────────────────────────────────
-const Annotation = ({ type, text, delay = 0, seed = 1, children, color = '#ff9900' }) => {
-  const [visible, setVisible] = React.useState(false);
-  const ref = React.useRef(null);
-  React.useEffect(() => {
-    const el = ref.current; if (!el) return;
-    const floor = 900, eff = Math.max(delay, floor);
-    const obs = new IntersectionObserver(([e]) => {
-      if (e.isIntersecting) { setTimeout(() => setVisible(true), eff); obs.disconnect(); }
-    }, { threshold: 0.3 });
-    obs.observe(el); return () => obs.disconnect();
-  }, [delay]);
-  const ns = { fontFamily: "'Caveat', cursive", fontSize: '20px', color, whiteSpace: 'nowrap', pointerEvents: 'none' };
-
-  if (type === 'circle') {
-    const { d1, d2 } = sketchyEllipsePath(100, 40, 92, 32, seed), len = 580;
-    return (
-      <span ref={ref} style={{ position: 'relative', display: 'inline' }}>
-        {children}
-        <svg viewBox="0 0 200 80" style={{ position: 'absolute', top: '-22px', left: '-17px', width: 'calc(100% + 34px)', height: 'calc(100% + 44px)', pointerEvents: 'none', overflow: 'visible' }}>
-          <path d={d1} fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-            strokeDasharray={len} strokeDashoffset={visible ? 0 : len}
-            style={{ transition: 'stroke-dashoffset 0.7s cubic-bezier(0.23, 1, 0.32, 1)', transform: 'rotate(-2deg)', transformOrigin: 'center', opacity: .9 }} />
-          <path d={d2} fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
-            strokeDasharray={len} strokeDashoffset={visible ? 0 : len}
-            style={{ transition: 'stroke-dashoffset 0.7s cubic-bezier(0.23, 1, 0.32, 1) 0.2s', transform: 'rotate(-1.5deg)', transformOrigin: 'center', opacity: .55 }} />
-        </svg>
-        {text && <span className="annotation-note" style={{ ...ns, position: 'absolute', top: '-44px', right: '-130px', opacity: visible ? 1 : 0, transform: visible ? 'translateY(0) rotate(-3deg)' : 'translateY(8px) rotate(-3deg)', transition: 'opacity 0.5s ease 0.7s, transform 0.5s ease 0.7s' }}>
-          {text} <span style={{ display: 'inline-block', transform: 'rotate(45deg)' }}>↙</span>
-        </span>}
-      </span>
-    );
-  }
-  if (type === 'underline' || type === 'arrow') {
-    const d = sketchyUnderlinePath(200, seed);
-    return (
-      <SideNotedSpan text={text} seed={seed} color={color} side="auto">
-        <span ref={ref} style={{ position: 'relative', display: 'inline' }}>
-          {children}
-          <svg viewBox="0 0 200 12" preserveAspectRatio="none" style={{ position: 'absolute', bottom: '-6px', left: '0', width: '100%', height: '10px', pointerEvents: 'none' }}>
-            <path d={d} fill="none" stroke={color} strokeWidth="2.2" strokeLinecap="round"
-              strokeDasharray="220" strokeDashoffset={visible ? 0 : 220}
-              style={{ transition: 'stroke-dashoffset 0.55s cubic-bezier(0.23, 1, 0.32, 1)' }} />
-          </svg>
-        </span>
-      </SideNotedSpan>
-    );
-  }
-  if (type === 'double-underline') {
-    const d1 = sketchyUnderlinePath(200, seed);
-    const d2 = sketchyUnderlinePath(200, seed + 7);
-    // If no text, skip SideNotedSpan wrapper
-    const inner = (
-      <span ref={ref} style={{ position: 'relative', display: 'inline' }}>
-        {children}
-        <svg viewBox="0 0 200 18" preserveAspectRatio="none"
-          style={{ position: 'absolute', bottom: '-8px', left: '0', width: '100%', height: '14px', pointerEvents: 'none' }}>
-          <path d={d1} fill="none" stroke={color} strokeWidth="2" strokeLinecap="round"
-            strokeDasharray="220" strokeDashoffset={visible ? 0 : 220}
-            style={{ transition: 'stroke-dashoffset 0.55s cubic-bezier(0.23, 1, 0.32, 1)' }} />
-          <path d={d2} fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round"
-            strokeDasharray="220" strokeDashoffset={visible ? 0 : 220}
-            style={{ transition: 'stroke-dashoffset 0.55s cubic-bezier(0.23, 1, 0.32, 1) 0.12s' }}
-            transform="translate(0,5)" />
-        </svg>
-      </span>
-    );
-    if (!text) return inner;
-    return (
-      <SideNotedSpan text={text} seed={seed} color={color} side="auto">
-        {inner}
-      </SideNotedSpan>
-    );
-  }
-  return <span ref={ref}>{children}</span>;
-};
+// ── Annotation / SideNotedSpan ───────────────────────────────────────────────
+// Static stubs: render children only, all SVG scribbles and margin notes dropped
+const SideNotedSpan = ({ children }) => <>{children}</>;
+const Annotation = ({ children }) => <>{children}</>;
 
 // ── FadeSection ─────────────────────────────────────────────────────────────
 const EASE_OUT_STRONG = 'cubic-bezier(0.23, 1, 0.32, 1)';
@@ -475,92 +51,12 @@ const FadeSection = ({ children, className, style, id, 'data-dark-section': data
   );
 };
 
-// ── UniqueDotRing ────────────────────────────────────────────────────────────
-const UniqueDotRing = ({ visible }) => {
-  const [dotsVisible, setDotsVisible] = React.useState([]);
-  React.useEffect(() => {
-    if (!visible) return;
-    const timers = [];
-    for (let i = 0; i < 12; i++) {
-      timers.push(setTimeout(() => setDotsVisible(prev => [...prev, i]), i * 40 + 200));
-    }
-    return () => timers.forEach(clearTimeout);
-  }, [visible]);
-
-  const dots = Array.from({ length: 12 }, (_, i) => {
-    const angle = (i / 12) * Math.PI * 2 - Math.PI / 2;
-    const jR = ((Math.sin(i * 17.3 + 3.7) * 10000) % 1000) / 1000 * 0.15 + 0.92;
-    const rx = 52 * jR, ry = 18 * jR;
-    const x = 54 + Math.cos(angle) * rx;
-    const y = 20 + Math.sin(angle) * ry;
-    const r = 2.2 + ((Math.sin(i * 9.1) * 10000) % 1000) / 1000 * 0.8;
-    return { x, y, r };
-  });
-
-  return (
-    <svg viewBox="0 0 108 40" style={{
-      position: 'absolute', top: '-8px', right: '-12px',
-      width: '108px', height: '40px', pointerEvents: 'none', overflow: 'visible'
-    }}>
-      {dots.map((d, i) => (
-        <circle key={i} cx={d.x} cy={d.y} r={d.r} fill="#ff9900"
-          opacity={dotsVisible.includes(i) ? 0.85 : 0}
-          style={{ transition: 'opacity 0.25s ease' }} />
-      ))}
-    </svg>
-  );
-};
-
 // ── TrenchcoatWord ───────────────────────────────────────────────────────────
-// Simple underline only, no circle, no annotation
-const TrenchcoatWord = () => {
-  const ref = React.useRef(null);
-  const [drawn, setDrawn] = React.useState(false);
-  const ulPath = React.useMemo(() => sketchyUnderlinePath(100, 9), []);
-  React.useEffect(() => {
-    const t = setTimeout(() => setDrawn(true), 300);
-    return () => clearTimeout(t);
-  }, []);
-  React.useEffect(() => {
-    if (!drawn || !ref.current) return;
-    const path = ref.current.querySelector('[data-ul]');
-    if (!path) return;
-    const len = path.getTotalLength();
-    path.style.strokeDasharray = `${len}`;
-    path.style.strokeDashoffset = `${len}`;
-    path.animate([{ strokeDashoffset: `${len}` }, { strokeDashoffset: '0' }],
-      { duration: 600, easing: 'ease-out', fill: 'forwards' });
-  }, [drawn]);
-  return (
-    <span ref={ref} style={{ position: 'relative', display: 'inline-block' }}>
-      trenchcoat
-      <svg viewBox="0 0 100 8" preserveAspectRatio="none"
-        style={{ position: 'absolute', bottom: '-3px', left: '-2px', width: 'calc(100% + 4px)', height: '8px', pointerEvents: 'none', overflow: 'visible' }}>
-        <path data-ul="1" d={ulPath} fill="none" stroke="#ff9900" strokeWidth="2" strokeLinecap="round" />
-      </svg>
-    </span>
-  );
-};
+const TrenchcoatWord = () => <>trenchcoat</>;
 
 // ── Hero ─────────────────────────────────────────────────────────────────────
 const Hero = () => {
   const [stage, setStage] = React.useState(0);
-  const [erikSettled, setErikSettled] = React.useState(false);
-  const [showDots, setShowDots] = React.useState(false);
-  const ulRef = React.useRef(null);
-  const heroSize = React.useMemo(() => Math.min(80, Math.max(52, window.innerWidth * 0.08)), []);
-  const ulPath = React.useMemo(() => sketchyUnderlinePath(200, 4), []);
-
-  React.useEffect(() => {
-    if (!erikSettled || !ulRef.current) return;
-    const path = ulRef.current.querySelector('[data-ul]');
-    if (!path) return;
-    const len = path.getTotalLength();
-    path.style.strokeDasharray = `${len}`;
-    path.style.strokeDashoffset = `${len}`;
-    path.animate([{ strokeDashoffset: `${len}` }, { strokeDashoffset: '0' }],
-      { duration: 700, easing: 'ease-out', delay: 100, fill: 'forwards' });
-  }, [erikSettled]);
 
   return (
     <header style={{ minHeight: '100dvh', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '0 10vw', position: 'relative' }}>
@@ -580,17 +76,9 @@ const Hero = () => {
           {/* Erik */}
           <span style={{ display: 'inline-block', minHeight: `clamp(58px, 9vw, 90px)`, position: 'relative', verticalAlign: 'baseline' }}>
             {stage >= 1 && (
-              <span style={{ position: 'relative', display: 'inline-block' }}>
-                <HandwrittenReveal text="Erik" fontSize={heroSize} strokeColor="#ff9900"
-                  stagger={55} glyphDuration={320} trigger="load" startDelay={150}
-                  onComplete={() => { setErikSettled(true); setStage(2); }}>
-                  <span style={{ fontFamily: "'Sanchez', serif", fontSize: `clamp(52px, 8vw, 80px)`, color: '#ff9900', letterSpacing: '-0.01em', lineHeight: 1 }}>Erik</span>
-                </HandwrittenReveal>
-                <svg ref={ulRef} viewBox="0 0 200 14" preserveAspectRatio="none"
-                  style={{ position: 'absolute', bottom: '-6px', left: '-4px', width: 'calc(100% + 8px)', height: '14px', pointerEvents: 'none', overflow: 'visible' }}>
-                  <path data-ul="1" d={ulPath} fill="none" stroke="#333333" strokeWidth="2.6" strokeLinecap="round" />
-                </svg>
-              </span>
+              <HandwrittenReveal onComplete={() => setStage(2)}>
+                <span style={{ fontFamily: "'Sanchez', serif", fontSize: `clamp(52px, 8vw, 80px)`, color: '#ff9900', letterSpacing: '-0.01em', lineHeight: 1 }}>Erik</span>
+              </HandwrittenReveal>
             )}
           </span>
 
@@ -614,15 +102,9 @@ const Hero = () => {
           {stage >= 3 && (
             <div>
               <div style={{ lineHeight: 1.6, position: 'relative', display: 'inline-block' }}>
-                <HandwrittenReveal text="Every industry thinks its problems are unique."
-                  fontSize={20} strokeColor="#333333" stagger={28} glyphDuration={180}
-                  trigger="load" startDelay={300} onComplete={() => { setShowDots(true); setStage(4); }}>
+                <HandwrittenReveal onComplete={() => setStage(4)}>
                   <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: '20px', lineHeight: 1.6 }}>
-                    Every industry thinks its problems are{' '}
-                    <span style={{ position: 'relative', display: 'inline-block' }}>
-                      unique.
-                      <UniqueDotRing visible={showDots} />
-                    </span>
+                    Every industry thinks its problems are unique.
                   </span>
                 </HandwrittenReveal>
               </div>
