@@ -88,9 +88,7 @@ const Hero = () => {
           {/* Dohnberg. */}
           <span style={{ display: 'inline-block', minHeight: `clamp(58px, 9vw, 90px)`, position: 'relative', verticalAlign: 'baseline' }}>
             {stage >= 2 && (
-              <HandwrittenReveal text="Dohnberg." fontSize={heroSize} strokeColor="#333333"
-                stagger={50} glyphDuration={280} trigger="load" startDelay={100}
-                onComplete={() => setStage(3)}>
+              <HandwrittenReveal onComplete={() => setStage(3)}>
                 <span style={{ fontFamily: "'Sanchez', serif", fontSize: `clamp(52px, 8vw, 80px)`, letterSpacing: '-0.01em', lineHeight: 1 }}>Dohnberg.</span>
               </HandwrittenReveal>
             )}
