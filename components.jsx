@@ -429,6 +429,10 @@ const ProudWork = () => {
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6" /></svg>
           </button>
         </div>
+        <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: '14px', color: '#888', textAlign: 'center', marginTop: '28px' }}>
+          This is a selection —{' '}
+          <a href="https://linkedin.com/in/erikdohnberg" target="_blank" rel="noopener" className="inline-link">see the full timeline on LinkedIn ↗</a>
+        </p>
       </div>
     </FadeSection>
   );
