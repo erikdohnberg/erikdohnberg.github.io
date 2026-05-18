@@ -72,18 +72,15 @@ const Hero = () => {
         </div>
 
         {/* "Erik Dohnberg." */}
-        <h1 style={{ fontSize: '0', lineHeight: 1.1, marginBottom: '20px', whiteSpace: 'nowrap' }}>
+        <h1 style={{ fontSize: '0', lineHeight: 1.1, marginBottom: '20px' }}>
           {/* Erik */}
-          <span style={{ display: 'inline-block', minHeight: `clamp(58px, 9vw, 90px)`, position: 'relative', verticalAlign: 'baseline' }}>
+          <span style={{ display: 'inline-block', minHeight: `clamp(58px, 9vw, 90px)`, position: 'relative', verticalAlign: 'baseline', marginRight: '0.22em' }}>
             {stage >= 1 && (
               <HandwrittenReveal onComplete={() => setStage(2)}>
                 <span style={{ fontFamily: "'Sanchez', serif", fontSize: `clamp(52px, 8vw, 80px)`, color: '#ff9900', letterSpacing: '-0.01em', lineHeight: 1 }}>Erik</span>
               </HandwrittenReveal>
             )}
           </span>
-
-          {/* Space between Erik and Dohnberg */}
-          <span style={{ fontSize: `clamp(52px, 8vw, 80px)`, display: 'inline-block', verticalAlign: 'baseline' }}>{' '}</span>
 
           {/* Dohnberg. */}
           <span style={{ display: 'inline-block', minHeight: `clamp(58px, 9vw, 90px)`, position: 'relative', verticalAlign: 'baseline' }}>
