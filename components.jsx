@@ -387,12 +387,12 @@ const SideProjects = () => (
 const PROUD_WORK_PROJECTS = [
   {
     title: 'The For You Feed',
-    tagline: 'A personalized content discovery system for a photography platform.',
+    tagline: 'The platform\'s largest content discovery overhaul in years — shipped to a global community of 15M+ creators.',
     body: (
       <>
-        Owned the redesign of 500px's content feeds — replacing legacy Popular and Fresh streams with a unified "For You" feed that mixed recommended photos, photo stories, photographers, and AI-curated{' '}
+        500px's first AI-personalized feed — replacing legacy Popular and Fresh streams with a unified "For You" experience that mixed recommended photos, photo stories, photographers, and AI-curated{' '}
         <Annotation type="arrow" text="focus on photographers" seed={9}>Mood Galleries</Annotation>
-        {'. '}The Mood Galleries feature was designed to take manual curation off the content team's plate so they could spend their time supporting photographers and growing the community instead.
+        {'. '}Shipped to 15M+ creators across 195 countries. The Mood Galleries feature was designed to take manual curation off the content team's plate so they could spend their time supporting photographers and growing the community instead.
       </>
     ),
     role: '— Senior PM at 500px, 2023.',
@@ -403,15 +403,37 @@ const PROUD_WORK_PROJECTS = [
     tagline: 'A direct-to-consumer contact lens platform that gave optometrists a stake in the purchases their patients were already making elsewhere.',
     body: (
       <>
-        Built as a 1-800-Contacts competitor, but with{' '}
+        The only PM on the project. Built as a 1-800-Contacts competitor, but with{' '}
         <Annotation type="underline" text="the actual point" seed={4}>the optometrist back in the loop</Annotation>
-        {' '}— better margins for doctors, better continuity of care for patients, lower friction than the incumbents. Launched in several U.S. states with plans for nationwide rollout.
+        {' '}— better margins for doctors, better continuity of care for patients, lower friction than the incumbents. ABB, the buying group behind Hello Abby, represents 23,000+ independent eye care professionals and 700M+ lens purchases annually. Published results: 3× lift in direct-to-patient sales, 300% over initial revenue target during MVP launch.
         <br /><br />
         🏆 MarCom Gold Award — Medical Website Category, 2023
       </>
     ),
-    role: '— Senior PM at Bounteous, 2022.',
+    role: '— PM at Bounteous, 2022–2023.',
     link: { href: 'https://helloabby.com', label: '→ helloabby.com' },
+  },
+  {
+    title: 'HomeVisit',
+    tagline: 'Real estate visual marketing platform — photography, video, 3D tours, and single property websites.',
+    body: (
+      <>
+        Navigated a mid-roadmap pivot when in-person showings collapsed at the start of the pandemic — shipped configurable per-agent single property websites as demand for virtual property content spiked. The work shipped through the most active US housing cycle since 2006.
+      </>
+    ),
+    role: '— PM at Intersect / CoreLogic, 2019–2022.',
+    link: { href: 'https://homevisit.com', label: '→ homevisit.com' },
+  },
+  {
+    title: 'Ample Organics',
+    tagline: 'Seed-to-sale compliance platform for 70%+ of Canada\'s licensed producers — built during the legalization of recreational cannabis.',
+    body: (
+      <>
+        The first PM hired at Ample — joined when the company was 25 people and helped grow the product discipline to 6 PMs as headcount scaled past 120. The work happened during the formative years of legal recreational cannabis in Canada: the market grew from $1.19B in 2019 to $3.92B by 2021 (Statistics Canada), and Ample was the primary compliance platform for 70%+ of the country's licensed producers throughout.
+      </>
+    ),
+    role: '— PM at Ample Organics, 2017–2019.',
+    link: { href: 'https://ampleorganics.com', label: '→ ampleorganics.com' },
   },
 ];
 
@@ -424,7 +446,7 @@ const ProudWork = () => {
       <div style={{ maxWidth: '880px', margin: '0 auto' }}>
         <IteratedTitle draft="Selected Work" final="Some work I'm proud of" />
         <p className="body-text" style={{ marginBottom: '48px', marginTop: '8px', maxWidth: '640px' }}>
-          A small selection. Real products that shipped, with real teams.
+          Four industries. Real products that shipped, with real teams.
         </p>
         {/* TODO: Restore two-column grid (screenshot + text) once real screenshots are added.
              Add: <div style={{ aspectRatio:'4/3', borderRadius:'6px', overflow:'hidden', boxShadow:'0 18px 40px rgba(20,14,5,0.12)' }}>
@@ -435,7 +457,7 @@ const ProudWork = () => {
           <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: '15px', color: '#999', fontStyle: 'italic', margin: '0 0 22px' }}>{project.tagline}</p>
           <p className="body-text" style={{ marginBottom: '20px' }}>{project.body}</p>
           <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: '14px', color: '#888', margin: '0 0 16px', fontStyle: 'italic' }}>{project.role}</p>
-          <a href={project.link.href} target="_blank" rel="noopener" className="inline-link">{project.link.label}</a>
+          {project.link && <a href={project.link.href} target="_blank" rel="noopener" className="inline-link">{project.link.label}</a>}
         </div>
         {/* Carousel nav */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '24px', marginTop: '56px' }}>
