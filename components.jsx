@@ -281,12 +281,13 @@ const Writing = () => {
       <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
         {[
           {
-            title: "Turning your org's strategic drift into product leverage",
-            desc: "The best PM moves don't look heroic. They look like timing."
+            title: "AI Made Your Junior Team Faster. It Also Made Your Job Harder.",
+            desc: "The work didn't disappear. It just moved upstairs.",
+            href: "https://substack.com/@heyerikd/note/p-198350792"
           },
           {
-            title: "Why your side project should live 12 months ahead of the AI you're building with",
-            desc: "Don't build what the platform already does. Build the thing that's just out of reach today."
+            title: "Turning your org's strategic drift into product leverage",
+            desc: "The best PM moves don't look heroic. They look like timing."
           },
           {
             title: "The whiteboard remembers what transcripts don't",
@@ -294,10 +295,18 @@ const Writing = () => {
           },
         ].map((card, i) => (
           <div key={i} className="writing-card writing-card-dark" style={{ position: 'relative' }}>
-            <span style={{
-              position: 'absolute', top: '12px', right: '14px',
-              fontFamily: "'Caveat', cursive", fontSize: '14px', color: '#ff9900', lineHeight: 1
-            }}>coming soon</span>
+            {card.href ? (
+              <a href={card.href} target="_blank" rel="noopener" style={{
+                position: 'absolute', top: '12px', right: '14px',
+                fontFamily: "'Caveat', cursive", fontSize: '14px', color: '#ff9900', lineHeight: 1,
+                textDecoration: 'none'
+              }}>Read ↗</a>
+            ) : (
+              <span style={{
+                position: 'absolute', top: '12px', right: '14px',
+                fontFamily: "'Caveat', cursive", fontSize: '14px', color: '#ff9900', lineHeight: 1
+              }}>coming soon</span>
+            )}
             <h3 style={{ fontFamily: "'Sanchez', serif", fontSize: '18px', color: '#f5f0e8', margin: '0 0 6px', paddingRight: '80px' }}>{card.title}</h3>
             <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: '15px', color: '#9a958d', margin: 0, lineHeight: 1.5 }}>{card.desc}</p>
           </div>
