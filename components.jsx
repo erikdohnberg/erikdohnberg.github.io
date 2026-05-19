@@ -474,7 +474,7 @@ const Footer = () => {
     <footer ref={ref} className="section section-light"
       style={{ padding: '100px 10vw 80px', textAlign: 'center', opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(20px)', transition: 'opacity .8s,transform .8s' }}>
       <p style={{ fontFamily: "'Caveat', cursive", fontSize: 'clamp(20px, 5vw, 26px)', color: '#333', marginBottom: '28px' }}>
-        Built in Toronto 🇨🇦, fuelled by espresso ☕️, and built with AI 🤖
+        Made in Toronto 🇨🇦, fuelled by espresso ☕️, and built with AI 🤖
       </p>
       <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '12px 28px', fontFamily: "'Raleway', sans-serif", fontSize: '14px' }}>
         <a href="https://www.linkedin.com/in/erik-dohnberg-019b9b65" target="_blank" rel="noopener" className="footer-link">LinkedIn</a>
