@@ -444,9 +444,9 @@ const Testimonials = () => (
       <h2 className="section-header section-header-dark">What it's like working with me</h2>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '40px', marginTop: '24px' }}>
         {[
-          { quote: "Erik is the glue that holds the place together. His enthusiasm infects the whole place with a sense of purpose.", name: "Kevin McLoughlin", title: "CPO at Dr.Bill" },
-          { quote: "Can sling a pitch deck better than I've ever seen.", name: "Martin Laws", title: "Fractional CTO" },
-          { quote: "His leadership style marries strategic vision with tactical expertise.", name: "Anas Herzallah", title: "Sales Manager (formerly Erik's report)" },
+          { quote: "While at 500px, Erik delivered a complex content feed experience working with the AI teams, development, and design to launch a personalized feed of posts and photos to millions of users. Erik is one of the good ones and would be a great addition to any growing product team.", name: "James Manson", title: "VP of Products at 500px, Erik's direct manager" },
+          { quote: "Erik consistently proved himself as the go-to problem solver when the team faced ambiguity, changing priorities, or tight deadlines. I have no reservations in saying that Erik would make an immediate and transformative impact on any team he joins.", name: "Anas Herzallah", title: "Sales Manager, Enterprise Infrastructure & AI (Erik's direct report)" },
+          { quote: "Erik's communication-first mindset to product management ensures that the right opinions are heard up front. Combine that with his focus on ruthlessly defining problems before solving them and you are set up for success.", name: "Will Badger", title: "Product Strategy, peer" },
         ].map((t, i) => (
           <blockquote key={i} style={{ margin: 0, padding: '0 0 0 28px', borderLeft: '3px solid #ff9900' }}>
             <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: '19px', color: '#f5f0e8', lineHeight: 1.7, fontStyle: 'italic', margin: '0 0 10px', fontWeight: 300 }}>
