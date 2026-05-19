@@ -386,7 +386,7 @@ const SideProjects = () => (
 // ── Proud Work ────────────────────────────────────────────────────────────────
 const PROUD_WORK_PROJECTS = [
   {
-    title: 'The For You Feed',
+    title: '500px\'s AI-Personalized Content Feeds',
     tagline: 'The platform\'s largest content discovery overhaul in years — shipped to a global community of 15M+ creators.',
     body: (
       <>
@@ -399,7 +399,7 @@ const PROUD_WORK_PROJECTS = [
     link: { href: 'https://500px.com/explore', label: '→ Live' },
   },
   {
-    title: 'Hello Abby',
+    title: 'Hello Abby\'s Optometrist-First Lens-Ordering Platform',
     tagline: 'A direct-to-consumer contact lens platform that gave optometrists a stake in the purchases their patients were already making elsewhere.',
     body: (
       <>
@@ -414,7 +414,7 @@ const PROUD_WORK_PROJECTS = [
     link: { href: 'https://helloabby.com', label: '→ helloabby.com' },
   },
   {
-    title: 'HomeVisit',
+    title: 'HomeVisit\'s Pivot to Virtual Property Marketing',
     tagline: 'Real estate visual marketing platform — photography, video, 3D tours, and single property websites.',
     body: (
       <>
@@ -425,7 +425,7 @@ const PROUD_WORK_PROJECTS = [
     link: { href: 'https://homevisit.com', label: '→ homevisit.com' },
   },
   {
-    title: 'Ample Organics',
+    title: 'Product Practice for the New Cannabis Industry',
     tagline: 'Seed-to-sale compliance platform for 70%+ of Canada\'s licensed producers — built during the legalization of recreational cannabis.',
     body: (
       <>
