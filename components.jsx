@@ -399,7 +399,7 @@ const PROUD_WORK_PROJECTS = [
     link: { href: 'https://500px.com/explore', label: '→ Live' },
   },
   {
-    title: 'Hello Abby\'s Optometrist-First Lens-Ordering Platform',
+    title: 'ABB Optical\'s Optometrist-First Lens-Ordering Platform',
     tagline: 'A direct-to-consumer contact lens platform that gave optometrists a stake in the purchases their patients were already making elsewhere.',
     body: (
       <>
