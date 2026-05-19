@@ -293,24 +293,35 @@ const Writing = () => {
             title: "The whiteboard remembers what transcripts don't",
             desc: "AI gives you retrieval infrastructure. Whiteboarding gives you encoded memory. They are not substitutes."
           },
-        ].map((card, i) => (
-          <div key={i} className="writing-card writing-card-dark" style={{ position: 'relative' }}>
-            {card.href ? (
-              <a href={card.href} target="_blank" rel="noopener" style={{
-                position: 'absolute', top: '12px', right: '14px',
-                fontFamily: "'Caveat', cursive", fontSize: '14px', color: '#ff9900', lineHeight: 1,
-                textDecoration: 'none'
-              }}>Read ↗</a>
-            ) : (
-              <span style={{
-                position: 'absolute', top: '12px', right: '14px',
-                fontFamily: "'Caveat', cursive", fontSize: '14px', color: '#ff9900', lineHeight: 1
-              }}>coming soon</span>
-            )}
-            <h3 style={{ fontFamily: "'Sanchez', serif", fontSize: '18px', color: '#f5f0e8', margin: '0 0 6px', paddingRight: '80px' }}>{card.title}</h3>
-            <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: '15px', color: '#9a958d', margin: 0, lineHeight: 1.5 }}>{card.desc}</p>
-          </div>
-        ))}
+        ].map((card, i) => {
+          const inner = (
+            <>
+              {card.href ? (
+                <span style={{
+                  position: 'absolute', top: '12px', right: '14px',
+                  fontFamily: "'Caveat', cursive", fontSize: '14px', color: '#ff9900', lineHeight: 1
+                }}>Read ↗</span>
+              ) : (
+                <span style={{
+                  position: 'absolute', top: '12px', right: '14px',
+                  fontFamily: "'Caveat', cursive", fontSize: '14px', color: '#ff9900', lineHeight: 1
+                }}>coming soon</span>
+              )}
+              <h3 style={{ fontFamily: "'Sanchez', serif", fontSize: '18px', color: '#f5f0e8', margin: '0 0 6px', paddingRight: '80px' }}>{card.title}</h3>
+              <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: '15px', color: '#9a958d', margin: 0, lineHeight: 1.5 }}>{card.desc}</p>
+            </>
+          );
+          return card.href ? (
+            <a key={i} href={card.href} target="_blank" rel="noopener"
+              className="writing-card writing-card-dark" style={{ position: 'relative', display: 'block', textDecoration: 'none', cursor: 'pointer' }}>
+              {inner}
+            </a>
+          ) : (
+            <div key={i} className="writing-card writing-card-dark" style={{ position: 'relative' }}>
+              {inner}
+            </div>
+          );
+        })}
       </div>
       <div style={{ marginTop: '32px', borderTop: '1px solid rgba(245,240,232,.12)', paddingTop: '28px' }}>
         {subStatus === 'done' ? (
