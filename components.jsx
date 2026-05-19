@@ -425,7 +425,7 @@ const PROUD_WORK_PROJECTS = [
     link: { href: 'https://homevisit.com', label: '→ homevisit.com' },
   },
   {
-    title: 'Product Practice for the New Cannabis Industry',
+    title: 'Establishing a Product Practice for the New Cannabis Industry',
     tagline: 'Seed-to-sale compliance platform for 70%+ of Canada\'s licensed producers — built during the legalization of recreational cannabis.',
     body: (
       <>
