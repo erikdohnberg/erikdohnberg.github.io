@@ -39,6 +39,13 @@ server.listen(3000, async () => {
     await page.goto('http://localhost:3000', { waitUntil: 'networkidle0', timeout: 30000 });
     await page.waitForSelector('#root > div', { timeout: 15000 });
     await new Promise(r => setTimeout(r, 3000)); // Babel compile + React paint buffer
+    // Strip Babel-injected inline compiled scripts before capturing — they contain the full
+    // transpiled source + a massive base64 source map that pushes body content past fetcher limits
+    await page.evaluate(() => {
+      document.querySelectorAll('script').forEach(s => {
+        if (s.textContent.trimStart().startsWith('"use strict";')) s.remove();
+      });
+    });
     const html = await page.content();
     writeFileSync(join(ROOT, 'index.html'), html, 'utf-8');
     console.log('Pre-render written to index.html');
