@@ -1,0 +1,272 @@
+/* Erik Dohnberg Design System — component styles
+ * Class-based styling for every component. All values derive from tokens.css. */
+
+/* ── Section ─────────────────────────────────────────────── */
+.ed-section {
+  position: relative;
+  padding: var(--ed-section-padding) 32px;
+  font-family: var(--ed-font-body);
+  color: var(--ed-color-ink);
+}
+.ed-section__inner {
+  max-width: var(--ed-measure);
+  margin: 0 auto;
+}
+.ed-section--paper {
+  background-color: var(--ed-color-bg-paper);
+  background-image:
+    radial-gradient(rgba(120, 95, 60, 0.05) 1px, transparent 1px),
+    repeating-linear-gradient(0deg, rgba(120, 95, 60, 0.015) 0px, rgba(120, 95, 60, 0.015) 1px, transparent 1px, transparent 4px);
+  background-size: 14px 14px, 100% 100%;
+}
+.ed-section--light {
+  background: var(--ed-color-bg-light);
+}
+.ed-section--dark {
+  background-color: var(--ed-color-bg-dark);
+  background-image:
+    radial-gradient(rgba(255, 240, 220, 0.025) 1px, transparent 1px),
+    radial-gradient(rgba(255, 153, 0, 0.04) 1px, transparent 1px);
+  background-size: 14px 14px, 28px 28px;
+  background-position: 0 0, 7px 7px;
+  color: var(--ed-color-cream);
+}
+
+/* ── SectionHeader ───────────────────────────────────────── */
+.ed-section-header {
+  font-family: var(--ed-font-display);
+  font-size: clamp(24px, 6vw, 36px);
+  color: var(--ed-color-ink);
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+  margin: 0;
+  display: inline-block;
+  position: relative;
+}
+.ed-section-header::after {
+  content: '';
+  display: block;
+  width: 44px;
+  height: 3px;
+  background: var(--ed-color-accent);
+  margin-top: 10px;
+}
+.ed-section-header--dark {
+  color: var(--ed-color-cream);
+}
+
+/* ── Eyebrow ─────────────────────────────────────────────── */
+.ed-eyebrow {
+  font-family: var(--ed-font-body);
+  font-size: clamp(13px, 2.5vw, 15px);
+  color: var(--ed-color-muted-light);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin: 0;
+}
+.ed-eyebrow--dark {
+  color: var(--ed-color-muted-dark);
+}
+
+/* ── Body text ───────────────────────────────────────────── */
+.ed-body {
+  font-family: var(--ed-font-body);
+  font-size: 17px;
+  line-height: 1.8;
+  color: var(--ed-color-ink);
+  text-wrap: pretty;
+  margin: 0;
+}
+.ed-body--dark {
+  color: #d8d2c6;
+}
+
+/* ── Button ──────────────────────────────────────────────── */
+.ed-btn {
+  font-family: var(--ed-font-body);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  padding: 11px 24px;
+  border-radius: var(--ed-radius);
+  cursor: pointer;
+  transition: background 0.2s ease-out, color 0.2s ease-out, border-color 0.2s ease-out;
+}
+.ed-btn:active {
+  transform: scale(0.97);
+}
+.ed-btn--primary {
+  border: 1px solid var(--ed-color-accent);
+  background: transparent;
+  color: var(--ed-color-accent);
+}
+.ed-btn--primary:hover {
+  background: var(--ed-color-accent);
+  color: #fff;
+}
+.ed-btn--solid {
+  border: 1px solid var(--ed-color-accent);
+  background: var(--ed-color-accent);
+  color: #fff;
+}
+.ed-btn--solid:hover {
+  background: var(--ed-color-accent-hover);
+  border-color: var(--ed-color-accent-hover);
+}
+.ed-btn--ghost {
+  border: 1px solid var(--ed-color-hairline);
+  background: transparent;
+  color: var(--ed-color-ink);
+}
+.ed-btn--ghost:hover {
+  border-color: var(--ed-color-accent);
+  color: var(--ed-color-accent);
+}
+.ed-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ── IconButton ──────────────────────────────────────────── */
+.ed-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--ed-color-hairline);
+  background: transparent;
+  color: var(--ed-color-ink);
+  cursor: pointer;
+  padding: 0;
+  transition: border-color 0.25s, color 0.25s, background 0.25s;
+}
+.ed-icon-btn:hover {
+  border-color: var(--ed-color-accent);
+  color: var(--ed-color-accent);
+  background: rgba(255, 153, 0, 0.06);
+}
+.ed-icon-btn:active {
+  transform: scale(0.97);
+}
+.ed-icon-btn--sm {
+  width: 36px;
+  height: 36px;
+}
+.ed-icon-btn--dark {
+  border-color: var(--ed-color-hairline-dark);
+  color: var(--ed-color-cream);
+}
+
+/* ── InlineLink ──────────────────────────────────────────── */
+.ed-link {
+  color: var(--ed-color-ink);
+  text-decoration: none;
+  border-bottom: 1px solid var(--ed-color-accent);
+  transition: color var(--ed-transition);
+}
+.ed-link:hover {
+  color: var(--ed-color-accent);
+}
+.ed-link--dark {
+  color: var(--ed-color-cream);
+}
+.ed-link--dark:hover {
+  color: var(--ed-color-accent-hover);
+}
+
+/* ── Card ────────────────────────────────────────────────── */
+.ed-card {
+  padding: 22px 26px;
+  border-radius: var(--ed-radius);
+  border: 1px solid #eee;
+  background: var(--ed-color-bg-light);
+  transition: border-color var(--ed-transition), background var(--ed-transition);
+}
+.ed-card--elevated {
+  padding: 36px;
+  border: 1px solid rgba(180, 150, 100, 0.14);
+  box-shadow: 0 2px 16px rgba(160, 120, 60, 0.07);
+}
+.ed-card--interactive {
+  cursor: pointer;
+}
+.ed-card--interactive:hover {
+  border-color: var(--ed-color-accent);
+}
+.ed-card--dark {
+  border: 1px solid var(--ed-color-hairline-dark);
+  background: rgba(245, 240, 232, 0.02);
+  color: var(--ed-color-cream);
+}
+.ed-card--dark.ed-card--interactive:hover {
+  border-color: rgba(255, 153, 0, 0.6);
+  background: rgba(255, 153, 0, 0.04);
+}
+
+/* ── Testimonial ─────────────────────────────────────────── */
+.ed-testimonial {
+  margin: 0;
+  padding: 0 0 0 28px;
+  border-left: 3px solid var(--ed-color-accent);
+}
+.ed-testimonial__quote {
+  font-family: var(--ed-font-body);
+  font-size: 19px;
+  line-height: 1.7;
+  font-style: italic;
+  font-weight: 300;
+  color: var(--ed-color-ink);
+  margin: 0 0 10px;
+}
+.ed-testimonial__footer {
+  font-family: var(--ed-font-body);
+  font-size: 14px;
+  color: var(--ed-color-muted-light);
+}
+.ed-testimonial--dark .ed-testimonial__quote {
+  color: var(--ed-color-cream);
+}
+.ed-testimonial--dark .ed-testimonial__footer {
+  color: var(--ed-color-muted-dark);
+}
+
+/* ── HandwrittenAccent ───────────────────────────────────── */
+.ed-accent {
+  font-family: var(--ed-font-accent);
+  font-size: 22px;
+  line-height: 1.3;
+  color: var(--ed-color-ink);
+}
+.ed-accent--accent {
+  color: var(--ed-color-accent);
+}
+.ed-accent--dark {
+  color: var(--ed-color-cream);
+}
+
+/* ── FadeSection ─────────────────────────────────────────── */
+.ed-fade {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.5s var(--ed-ease-out-strong), transform 0.5s var(--ed-ease-out-strong);
+}
+.ed-fade--visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .ed-fade {
+    transform: none;
+    transition: opacity 0.2s ease-out;
+  }
+}
+
+/* ── Focus ring (shared) ─────────────────────────────────── */
+.ed-btn:focus-visible,
+.ed-icon-btn:focus-visible,
+.ed-link:focus-visible {
+  outline: 2px solid var(--ed-color-accent);
+  outline-offset: 3px;
+}

@@ -1,0 +1,7 @@
+/* Erik Dohnberg Design System — stylesheet entry.
+ * Import this once in your app to get fonts + tokens + every component style.
+ *   import '@erikdohnberg/design-system/styles.css'
+ */
+@import './fonts.css';
+@import './tokens.css';
+@import './components.css';
