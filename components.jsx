@@ -95,7 +95,7 @@ const Hero = () => {
         {/* Role */}
         {stage >= 3 && (
           <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: 'clamp(13px, 2.5vw, 15px)', color: '#888', letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: '28px', marginTop: '4px' }}>
-            Senior Product Manager · Toronto
+            Senior Product Leader · Toronto
           </p>
         )}
 
