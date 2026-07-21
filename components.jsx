@@ -136,6 +136,7 @@ const Hero = () => {
         }}>
           <a href="https://www.linkedin.com/in/erik-dohnberg-019b9b65" target="_blank" rel="noopener" className="hero-link">LinkedIn ↗</a>
           <a href="https://substack.com/@heyerikd" target="_blank" rel="noopener" className="hero-link">Substack ↗</a>
+          <a href="https://github.com/erikdohnberg" target="_blank" rel="noopener" className="hero-link">GitHub ↗</a>
         </div>
       </div>
 
