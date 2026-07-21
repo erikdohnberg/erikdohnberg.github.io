@@ -95,7 +95,7 @@ const Hero = () => {
         {/* Role */}
         {stage >= 3 && (
           <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: 'clamp(13px, 2.5vw, 15px)', color: '#888', letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: '28px', marginTop: '4px' }}>
-            Senior Product Manager · Toronto
+            Senior Product Leader · Toronto
           </p>
         )}
 
@@ -136,6 +136,7 @@ const Hero = () => {
         }}>
           <a href="https://www.linkedin.com/in/erik-dohnberg-019b9b65" target="_blank" rel="noopener" className="hero-link">LinkedIn ↗</a>
           <a href="https://substack.com/@heyerikd" target="_blank" rel="noopener" className="hero-link">Substack ↗</a>
+          <a href="https://github.com/erikdohnberg" target="_blank" rel="noopener" className="hero-link">GitHub ↗</a>
         </div>
       </div>
 
@@ -236,7 +237,7 @@ const About = () => (
     <div style={{ maxWidth: '640px', margin: '0 auto' }}>
       <h2 className="section-header" style={{ marginBottom: '28px' }}>About</h2>
       <p className="body-text" style={{ marginBottom: '24px' }}>
-        I'm a Senior PM based in Toronto. I've shipped products in multiple industries including social media, healthcare, heavily regulated supply-chain software, food operations software, and D2C retail. The contexts look different, but <strong>the actual problems — user adoption, competitor pressure, regulatory fog, constant prioritization under uncertainty — show up time and time again.</strong> Once you've seen the pattern enough times, you can focus on the craft of good product strategy and delivery.
+        I'm a Senior Product Leader based in Toronto. I've shipped products in multiple industries including social media, healthcare, heavily regulated supply-chain software, food operations software, and D2C retail. The contexts look different, but <strong>the actual problems — user adoption, competitor pressure, regulatory fog, constant prioritization under uncertainty — show up time and time again.</strong> Once you've seen the pattern enough times, you can focus on the craft of good product strategy and delivery.
       </p>
       <p className="body-text" style={{ marginBottom: '24px' }}>
         I've been building AI-powered products since 2023 — ML-curated content feeds at 500px, LLM-integrated decision tools, and ML Forecasting Models for enterprise food operators. I'm <strong>outcome-driven, not output-driven.</strong> Code is cheaper than ever. <em>What you choose to build is the whole game.</em> I do my best work on small teams with clear ownership, leadership that's still close to the work, and a bias toward shipping.
