@@ -397,7 +397,7 @@ const PROUD_WORK_PROJECTS = [
       </>
     ),
     role: '— Senior PM at 500px, 2023.',
-    link: { href: 'https://500px.com/explore', label: '→ Live' },
+    link: { href: 'https://500px.com/explore', label: '→ 500px.com' },
   },
   {
     title: 'ABB Optical\'s Optometrist-First Lens-Ordering Platform',
