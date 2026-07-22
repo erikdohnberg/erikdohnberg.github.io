@@ -134,7 +134,7 @@ const Hero = () => {
           transform: stage >= 5 ? 'translateY(0)' : 'translateY(8px)',
           transition: `opacity 0.6s ${EASE_OUT_STRONG} 0.3s, transform 0.6s ${EASE_OUT_STRONG} 0.3s`,
         }}>
-          <a href="https://www.linkedin.com/in/erik-dohnberg-019b9b65" target="_blank" rel="noopener" className="hero-link">LinkedIn ↗</a>
+          <a href="https://www.linkedin.com/in/erik-dohnberg/" target="_blank" rel="noopener" className="hero-link">LinkedIn ↗</a>
           <a href="https://substack.com/@heyerikd" target="_blank" rel="noopener" className="hero-link">Substack ↗</a>
           <a href="https://github.com/erikdohnberg" target="_blank" rel="noopener" className="hero-link">GitHub ↗</a>
         </div>
@@ -211,7 +211,7 @@ const TopBar = () => {
         </span>
       </button>
       <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-        <a href="https://www.linkedin.com/in/erik-dohnberg-019b9b65" target="_blank" rel="noopener" aria-label="LinkedIn" className="topbar-icon" style={{ color: tc }}>
+        <a href="https://www.linkedin.com/in/erik-dohnberg/" target="_blank" rel="noopener" aria-label="LinkedIn" className="topbar-icon" style={{ color: tc }}>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
             <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
           </svg>
@@ -473,7 +473,7 @@ const ProudWork = () => {
           </button>
         </div>
         <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: '14px', color: '#888', textAlign: 'center', marginTop: '28px' }}>
-          <a href="https://www.linkedin.com/in/erik-dohnberg-019b9b65" target="_blank" rel="noopener" className="inline-link">Full timeline on LinkedIn ↗</a>
+          <a href="https://www.linkedin.com/in/erik-dohnberg/" target="_blank" rel="noopener" className="inline-link">Full timeline on LinkedIn ↗</a>
         </p>
       </div>
     </FadeSection>
@@ -520,7 +520,7 @@ const Footer = () => {
         Made in Toronto 🇨🇦 fuelled by espresso ☕️ and built with AI 🤖
       </p>
       <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '12px 28px', fontFamily: "'Raleway', sans-serif", fontSize: '14px' }}>
-        <a href="https://www.linkedin.com/in/erik-dohnberg-019b9b65" target="_blank" rel="noopener" className="footer-link">LinkedIn</a>
+        <a href="https://www.linkedin.com/in/erik-dohnberg/" target="_blank" rel="noopener" className="footer-link">LinkedIn</a>
         <a href="https://substack.com/@heyerikd" target="_blank" rel="noopener" className="footer-link">Substack</a>
         <a href="mailto:erikdohnberg@gmail.com" className="footer-link">erikdohnberg@gmail.com</a>
       </div>

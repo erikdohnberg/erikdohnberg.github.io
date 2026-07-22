@@ -102,6 +102,6 @@ GitHub: https://github.com/erikdohnberg/helm
 ## Contact
 
 Email: erikdohnberg@gmail.com
-LinkedIn: https://www.linkedin.com/in/erik-dohnberg-019b9b65
+LinkedIn: https://www.linkedin.com/in/erik-dohnberg/
 Substack: https://substack.com/@heyerikd
 Website: https://erikdohnberg.com
