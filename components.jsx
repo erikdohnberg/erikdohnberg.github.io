@@ -809,7 +809,7 @@ const Testimonials = () => {
 
         {/* Off-screen measurer: every quote at the live width, so the area height
             covers the tallest and never shifts between transitions or filters. */}
-        <div ref={measureRef} aria-hidden="true" style={{ position: 'absolute', left: '-99999px', top: 0, width: areaW ? areaW + 'px' : '720px', visibility: 'hidden', pointerEvents: 'none' }}>
+        <div ref={measureRef} aria-hidden="true" style={{ position: 'absolute', left: '-99999px', top: 0, width: areaW ? areaW + 'px' : '720px', height: 0, overflow: 'hidden', visibility: 'hidden', pointerEvents: 'none' }}>
           {TESTIMONIALS.map((t) => (
             <div key={t.id} style={{ display: 'flex', flexDirection: 'column', paddingTop: '14px' }}>
               <TestimonialQuote item={t} />
