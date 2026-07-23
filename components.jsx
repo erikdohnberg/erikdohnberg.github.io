@@ -666,7 +666,7 @@ const orderNoAdjacentTag = (items) => {
 };
 
 const TESTIMONIAL_GAP = 32;      // px, gutter between the two desktop cards
-const TESTIMONIAL_ADVANCE = 7000; // ms between auto-advances
+const TESTIMONIAL_ADVANCE = 12000; // ms between auto-advances — long enough to read a ~50-word quote
 const TESTIMONIAL_FADE = 600;     // ms crossfade duration
 
 const TestimonialCard = ({ item, minH }) => (
