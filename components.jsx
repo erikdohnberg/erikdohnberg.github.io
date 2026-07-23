@@ -615,10 +615,10 @@ const TESTIMONIALS = [
     name: "Joshua Lee", role: "Lead Product Designer, Compass Digital", relationship: "design partner" },
   { id: "antaya", tag: "collaboration",
     quote: "His coaching experience and positive attitude were an asset to the team… His strengths include keeping the team organized, motivated, and focused on tangible project milestones.",
-    name: "Matt Antaya", role: "colleague, Nascent Digital", relationship: "now Senior Engineering Manager, Discord" },
+    name: "Matt Antaya", role: "now Senior Engineering Manager, Discord", relationship: "former colleague, Nascent Digital" },
   { id: "minhajuddin", tag: "collaboration",
     quote: "He really understands the priorities of the product and makes sure that the team is spending resources on the most important tasks at any point. He has great leadership qualities and can rally the whole team behind a common cause.",
-    name: "Khaja Minhajuddin", role: "engineer, Ample Organics", relationship: "now Staff Software Engineer, Instacart" },
+    name: "Khaja Minhajuddin", role: "now Staff Software Engineer, Instacart", relationship: "former engineer, Ample Organics" },
 ];
 
 // Auto-advance interval and crossfade duration (ms).
