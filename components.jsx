@@ -480,30 +480,275 @@ const ProudWork = () => {
   );
 };
 
-// ── Testimonials ──────────────────────────────────────────────────────────────
-const Testimonials = () => (
-  <FadeSection id="testimonials" className="section section-dark" data-dark-section="true" style={{ padding: '120px 32px' }}>
-    <div style={{ maxWidth: '640px', margin: '0 auto' }}>
-      <h2 className="section-header section-header-dark">What it's like working with me</h2>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '40px', marginTop: '24px' }}>
-        {[
-          { quote: "While at 500px, Erik delivered a complex content feed experience working with the AI teams, development, and design to launch a personalized feed of posts and photos to millions of users. Erik is one of the good ones and would be a great addition to any growing product team.", name: "James Manson", title: "VP of Products at 500px, Erik's direct manager" },
-          { quote: "Erik consistently proved himself as the go-to problem solver when the team faced ambiguity, changing priorities, or tight deadlines. I have no reservations in saying that Erik would make an immediate and transformative impact on any team he joins.", name: "Anas Herzallah", title: "Associate Product Manager at Bounteous, Erik's direct report" },
-          { quote: "Erik's communication-first mindset to product management ensures that the right opinions are heard up front. Combine that with his focus on ruthlessly defining problems before solving them and you are set up for success.", name: "Will Badger", title: "Product Manager at Ample Organics, peer" },
-        ].map((t, i) => (
-          <blockquote key={i} style={{ margin: 0, padding: '0 0 0 28px', borderLeft: '3px solid #ff9900' }}>
-            <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: '19px', color: '#f5f0e8', lineHeight: 1.7, fontStyle: 'italic', margin: '0 0 10px', fontWeight: 300 }}>
-              "{t.quote}"
-            </p>
-            <footer style={{ fontFamily: "'Raleway', sans-serif", fontSize: '14px', color: '#9a958d' }}>
-              — {t.name}, {t.title}
-            </footer>
-          </blockquote>
-        ))}
-      </div>
-    </div>
-  </FadeSection>
+// ── Testimonials data ─────────────────────────────────────────────────────────
+// Verbatim excerpts from real LinkedIn recommendations. Do NOT edit the quote,
+// name, role, or relationship strings — punctuation, ellipses (…), em dashes (—)
+// and apostrophes (’) are intentional and must render character-for-character.
+const TESTIMONIALS = [
+  { id: "laba", tag: "ai",
+    quote: "Erik was a huge boon to the team in our transformation to an AI focus and helped all of us level up… Something that I appreciate about Erik’s work was how he established supporting docs, and sustainable approaches that allowed others to build off the work he led.",
+    name: "Jonathan Laba", role: "Senior Product Manager, Compass Digital", relationship: "peer" },
+  { id: "manson", tag: "ai",
+    quote: "While at 500px he delivered a complex content feed experience working with the AI teams, development, and design to launch a personalized feed of posts and photos to millions of 500px users.",
+    name: "James Manson", role: "VP of Products, 500px", relationship: "Erik’s direct manager" },
+  { id: "sluchevsky", tag: "ai",
+    quote: "Erik had a knack for spotting problem spaces where data and AI could make a real difference.",
+    name: "Ally Sluchevsky", role: "Senior Director of Product Management, Compass Digital", relationship: "Erik’s manager, Data & AI team" },
+  { id: "herzallah", tag: "leadership",
+    quote: "Erik stands out as one of the most remarkable managers I’ve had the privilege to work under… He consistently proved himself as the go-to problem solver when the team faced ambiguity, changing priorities, or tight deadlines.",
+    name: "Anas Herzallah", role: "Associate Product Manager, Bounteous", relationship: "Erik’s direct report" },
+  { id: "mcloughlin", tag: "leadership",
+    quote: "I cannot more highly recommend Erik than to say, if I were starting a company tomorrow, I’d be trying to figure out how to hire him today.",
+    name: "Kevin McLoughlin", role: "now Chief Product Officer, Dr.Bill", relationship: "met Erik as a Bitmaker student" },
+  { id: "stpierre", tag: "leadership",
+    quote: "He was our first full time product manager and has worked to help build out the team and establish best practices for building products at Ample.",
+    name: "Rigel St Pierre", role: "engineering colleague, Ample Organics", relationship: "now Head of Engineering, Rootly" },
+  { id: "badger", tag: "craft",
+    quote: "His communication-first mindset to product management ensures that the right opinions are heard up front. Combine that with his focus on ruthlessly defining problems before solving them and you are set up for success.",
+    name: "Will Badger", role: "Product Manager, Ample Organics", relationship: "peer" },
+  { id: "wiland", tag: "craft",
+    quote: "Erik is an incredible master at scoping requirements and specifications… His ability to express intricate technical details into fully scalable enterprise solutions has provided extreme value at Ample Organics.",
+    name: "Mike Wiland", role: "infrastructure engineer, Ample Organics", relationship: "engineering colleague" },
+  { id: "laws", tag: "craft",
+    quote: "He has a remarkable ability to keep team members motivated and positive while challenging assumptions, defining requirements, and adapting to business needs. He is able to navigate complex relationships, both internally and externally, and can sling a pitch deck better than I’ve ever seen.",
+    name: "Martin Laws", role: "Founder, Low Tide Consulting", relationship: "colleague" },
+  { id: "lee", tag: "collaboration",
+    quote: "He never assumed he had the answers up front — he made real room for user insights to shape our direction, and he trusted me as a designer to explore the solution space fully before converging.",
+    name: "Joshua Lee", role: "Lead Product Designer, Compass Digital", relationship: "design partner" },
+  { id: "antaya", tag: "collaboration",
+    quote: "His coaching experience and positive attitude were an asset to the team… His strengths include keeping the team organized, motivated, and focused on tangible project milestones.",
+    name: "Matt Antaya", role: "colleague, Nascent Digital", relationship: "now Senior Engineering Manager, Discord" },
+  { id: "minhajuddin", tag: "collaboration",
+    quote: "He really understands the priorities of the product and makes sure that the team is spending resources on the most important tasks at any point. He has great leadership qualities and can rally the whole team behind a common cause.",
+    name: "Khaja Minhajuddin", role: "engineer, Ample Organics", relationship: "now Staff Software Engineer, Instacart" },
+];
+
+// Fisher–Yates shuffle (non-mutating)
+const shuffleTestimonials = (arr) => {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const t = a[i]; a[i] = a[j]; a[j] = t;
+  }
+  return a;
+};
+
+// Order the pool so no two neighbours share a tag. The constraint is circular:
+// the rotation loops and shows a sliding 2-up window, so the wrap-around pair
+// (last, first) is visible too and must also differ. With 4 tags × 3 quotes a
+// valid circular arrangement always exists.
+const orderNoAdjacentTag = (items) => {
+  const circularOk = (arr) => {
+    for (let i = 0; i < arr.length; i++) {
+      if (arr[i].tag === arr[(i + 1) % arr.length].tag) return false;
+    }
+    return true;
+  };
+  for (let attempt = 0; attempt < 500; attempt++) {
+    const candidate = shuffleTestimonials(items);
+    if (circularOk(candidate)) return candidate;
+  }
+  // Greedy fallback: always place the tag with the most remaining quotes that
+  // differs from the previously placed one.
+  const pool = shuffleTestimonials(items);
+  const result = [];
+  while (pool.length) {
+    const counts = {};
+    pool.forEach((x) => { counts[x.tag] = (counts[x.tag] || 0) + 1; });
+    const lastTag = result.length ? result[result.length - 1].tag : null;
+    let pick = -1, best = -1;
+    for (let i = 0; i < pool.length; i++) {
+      if (pool[i].tag === lastTag) continue;
+      if (counts[pool[i].tag] > best) { best = counts[pool[i].tag]; pick = i; }
+    }
+    if (pick === -1) pick = 0;
+    result.push(pool.splice(pick, 1)[0]);
+  }
+  return result;
+};
+
+const TESTIMONIAL_GAP = 32;      // px, gutter between the two desktop cards
+const TESTIMONIAL_ADVANCE = 7000; // ms between auto-advances
+const TESTIMONIAL_FADE = 600;     // ms crossfade duration
+
+const TestimonialCard = ({ item, minH }) => (
+  <blockquote style={{
+    margin: 0, padding: '0 0 0 28px', borderLeft: '3px solid #ff9900',
+    minHeight: minH ? minH + 'px' : undefined,
+    display: 'flex', flexDirection: 'column',
+  }}>
+    <p style={{
+      fontFamily: "'Raleway', sans-serif", fontSize: '18px', color: '#f5f0e8',
+      lineHeight: 1.7, fontStyle: 'italic', margin: '0 0 14px', fontWeight: 300,
+      flexGrow: 1,
+    }}>
+      {item.quote}
+    </p>
+    <footer style={{ fontFamily: "'Raleway', sans-serif", fontSize: '14px', color: '#9a958d' }}>
+      — {item.name}, {item.role}, {item.relationship}
+    </footer>
+  </blockquote>
 );
+
+// ── Testimonials (rotating) ───────────────────────────────────────────────────
+const Testimonials = () => {
+  const order = React.useMemo(() => orderNoAdjacentTag(TESTIMONIALS), []);
+  const N = order.length;
+
+  const getPerView = () =>
+    (typeof window !== 'undefined' && window.matchMedia('(max-width: 768px)').matches) ? 1 : 2;
+
+  const [perView, setPerView] = React.useState(getPerView);
+  const [containerW, setContainerW] = React.useState(0);
+  const [minH, setMinH] = React.useState(0);
+  const [frame, setFrame] = React.useState({ a: 0, b: 0, active: 'a' });
+  const [paused, setPaused] = React.useState(false);
+
+  const gridRef = React.useRef(null);
+  const measureRef = React.useRef(null);
+
+  // Track available width + how many cards fit
+  React.useEffect(() => {
+    const el = gridRef.current;
+    if (!el) return;
+    const update = () => { setContainerW(el.clientWidth); setPerView(getPerView()); };
+    update();
+    let ro;
+    if (typeof ResizeObserver !== 'undefined') {
+      ro = new ResizeObserver(update);
+      ro.observe(el);
+    }
+    window.addEventListener('resize', update);
+    return () => { if (ro) ro.disconnect(); window.removeEventListener('resize', update); };
+  }, []);
+
+  const cardW = perView > 1
+    ? Math.max(0, (containerW - TESTIMONIAL_GAP * (perView - 1)) / perView)
+    : containerW;
+
+  // Measure the tallest card at the current card width so height is fixed and
+  // transitions never cause layout shift.
+  React.useLayoutEffect(() => {
+    const el = measureRef.current;
+    if (!el || !cardW) return;
+    let max = 0;
+    for (const child of el.children) max = Math.max(max, child.offsetHeight);
+    if (max && Math.abs(max - minH) > 1) setMinH(max);
+  }, [cardW, perView, N]);
+
+  // Re-measure once web fonts have loaded (font swap changes wrapping/height)
+  React.useEffect(() => {
+    if (typeof document === 'undefined' || !document.fonts || !document.fonts.ready) return;
+    let cancelled = false;
+    document.fonts.ready.then(() => {
+      if (cancelled) return;
+      const el = measureRef.current;
+      if (!el || !cardW) return;
+      let max = 0;
+      for (const child of el.children) max = Math.max(max, child.offsetHeight);
+      if (max && Math.abs(max - minH) > 1) setMinH(max);
+    });
+    return () => { cancelled = true; };
+  }, [cardW]);
+
+  const go = React.useCallback((dir) => {
+    setFrame((prev) => {
+      const cur = prev.active === 'a' ? prev.a : prev.b;
+      const next = ((cur + dir) % N + N) % N;
+      return prev.active === 'a'
+        ? { a: prev.a, b: next, active: 'b' }
+        : { a: next, b: prev.b, active: 'a' };
+    });
+  }, [N]);
+
+  // Auto-advance — disabled under reduced motion or while paused
+  React.useEffect(() => {
+    if (REDUCED_MOTION || paused) return;
+    const t = setInterval(() => go(1), TESTIMONIAL_ADVANCE);
+    return () => clearInterval(t);
+  }, [paused, go]);
+
+  const measured = minH > 0;
+
+  const Row = ({ startPos }) => (
+    <div style={{
+      display: 'grid',
+      gridTemplateColumns: `repeat(${perView}, minmax(0, 1fr))`,
+      gap: TESTIMONIAL_GAP + 'px',
+      alignItems: 'stretch',
+    }}>
+      {Array.from({ length: perView }).map((_, i) => {
+        const item = order[(startPos + i) % N];
+        return <TestimonialCard key={item.id} item={item} minH={minH} />;
+      })}
+    </div>
+  );
+
+  const layerStyle = (name) => {
+    if (!measured) {
+      // Pre-measurement: render only the active layer in normal flow so the
+      // container has a real height (no collapse, no overflow flash).
+      return name === frame.active ? {} : { display: 'none' };
+    }
+    const isActive = name === frame.active;
+    return {
+      position: 'absolute', top: 0, left: 0, right: 0,
+      opacity: isActive ? 1 : 0,
+      transition: REDUCED_MOTION ? 'none' : `opacity ${TESTIMONIAL_FADE}ms ease`,
+      pointerEvents: isActive ? 'auto' : 'none',
+    };
+  };
+
+  return (
+    <FadeSection id="testimonials" className="section section-dark" data-dark-section="true" style={{ padding: '120px 32px' }}>
+      <div style={{ maxWidth: '900px', margin: '0 auto' }}>
+        <h2 className="section-header section-header-dark">What it's like working with me</h2>
+
+        <div
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => setPaused(false)}
+          onFocus={() => setPaused(true)}
+          onBlur={() => setPaused(false)}
+          style={{ marginTop: '32px' }}
+        >
+          {/* Crossfading window of quote cards */}
+          <div
+            ref={gridRef}
+            role="group"
+            aria-roledescription="carousel"
+            aria-label="Testimonials"
+            style={{ position: 'relative', height: measured ? minH + 'px' : 'auto' }}
+          >
+            <div style={layerStyle('a')}><Row startPos={frame.a} /></div>
+            <div style={layerStyle('b')}><Row startPos={frame.b} /></div>
+          </div>
+
+          {/* Prev / next controls */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '24px', marginTop: '40px' }}>
+            <button onClick={() => go(-1)} className="carousel-btn-dark" aria-label="Previous testimonials">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6" /></svg>
+            </button>
+            <button onClick={() => go(1)} className="carousel-btn-dark" aria-label="Next testimonials">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6" /></svg>
+            </button>
+          </div>
+        </div>
+
+        {/* Off-screen measurer: every quote rendered at the live card width so we
+            can fix the card height to the tallest and avoid layout shift. */}
+        <div
+          ref={measureRef}
+          aria-hidden="true"
+          style={{ position: 'absolute', top: 0, left: '-99999px', width: cardW ? cardW + 'px' : '440px', visibility: 'hidden', pointerEvents: 'none' }}
+        >
+          {TESTIMONIALS.map((item) => (
+            <TestimonialCard key={item.id} item={item} minH={0} />
+          ))}
+        </div>
+      </div>
+    </FadeSection>
+  );
+};
 
 // ── Footer ────────────────────────────────────────────────────────────────────
 const Footer = () => {
