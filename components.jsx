@@ -462,7 +462,7 @@ const PROUD_WORK_PROJECTS = [
 // items without one render exactly as before (no placeholder, no reserved space).
 // WebP with PNG fallback, lazy-loaded, click/Enter/Space opens a larger modal.
 const ProjectImage = ({ image, onOpen }) => (
-  <figure style={{ margin: '0 0 26px' }}>
+  <figure className="proud-image" style={{ margin: 0 }}>
     <button type="button" onClick={onOpen} aria-label="Open larger image"
       className="project-image-btn"
       style={{ display: 'block', width: '100%', padding: 0, border: 'none', background: 'none',
@@ -482,6 +482,9 @@ const ProjectImage = ({ image, onOpen }) => (
 
 // ── ImageModal ────────────────────────────────────────────────────────────────
 // Dismiss via the X button, a click outside the image, or the ESC key.
+// Rendered through a portal on document.body so it always centres on the
+// viewport — nesting it under FadeSection's transform would otherwise anchor
+// the fixed overlay to that section instead of the page.
 const ImageModal = ({ image, onClose }) => {
   React.useEffect(() => {
     const onKey = e => { if (e.key === 'Escape') onClose(); };
@@ -490,7 +493,7 @@ const ImageModal = ({ image, onClose }) => {
     document.body.style.overflow = 'hidden';
     return () => { document.removeEventListener('keydown', onKey); document.body.style.overflow = prevOverflow; };
   }, [onClose]);
-  return (
+  return ReactDOM.createPortal(
     <div onClick={onClose} role="dialog" aria-modal="true" aria-label={image.alt}
       style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(20,14,5,0.82)',
         backdropFilter: 'blur(4px)', WebkitBackdropFilter: 'blur(4px)',
@@ -512,7 +515,8 @@ const ImageModal = ({ image, onClose }) => {
         </picture>
         <figcaption style={{ fontFamily: "'Raleway', sans-serif", fontSize: '13px', color: '#c9c3b8', textAlign: 'center' }}>{image.caption}</figcaption>
       </figure>
-    </div>
+    </div>,
+    document.body
   );
 };
 
@@ -530,14 +534,29 @@ const ProudWork = () => {
         <p className="body-text" style={{ marginBottom: '48px', marginTop: '8px', maxWidth: '640px' }}>
           Real products that shipped, with real teams.
         </p>
-        <div key={idx + '-txt'} style={{ maxWidth: '640px', animation: 'txtIn 0.5s ease' }}>
-          {project.image && <ProjectImage image={project.image} onOpen={() => setModalOpen(true)} />}
-          <h3 style={{ fontFamily: "'Sanchez', serif", fontSize: '28px', color: '#333', margin: '0 0 6px' }}>{project.title}</h3>
-          <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: '15px', color: '#999', fontStyle: 'italic', margin: '0 0 22px' }}>{project.tagline}</p>
-          <p className="body-text" style={{ marginBottom: '20px' }}>{project.body}</p>
-          <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: '14px', color: '#888', margin: '0 0 16px', fontStyle: 'italic' }}>{project.role}</p>
-          {project.link && <a href={project.link.href} target="_blank" rel="noopener" className="inline-link">{project.link.label}</a>}
-        </div>
+        {(() => {
+          const textCol = (
+            <div className="proud-text-col">
+              <h3 style={{ fontFamily: "'Sanchez', serif", fontSize: '28px', color: '#333', margin: '0 0 6px' }}>{project.title}</h3>
+              <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: '15px', color: '#999', fontStyle: 'italic', margin: '0 0 22px' }}>{project.tagline}</p>
+              <p className="body-text" style={{ marginBottom: '20px' }}>{project.body}</p>
+              <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: '14px', color: '#888', margin: '0 0 16px', fontStyle: 'italic' }}>{project.role}</p>
+              {project.link && <a href={project.link.href} target="_blank" rel="noopener" className="inline-link">{project.link.label}</a>}
+            </div>
+          );
+          // Image items: two columns on desktop (text left, smaller image right),
+          // stacked on mobile (image above text). Text-only items are unchanged.
+          return project.image ? (
+            <div key={idx + '-txt'} className="proud-carousel-grid" style={{ animation: 'txtIn 0.5s ease' }}>
+              <ProjectImage image={project.image} onOpen={() => setModalOpen(true)} />
+              {textCol}
+            </div>
+          ) : (
+            <div key={idx + '-txt'} style={{ maxWidth: '640px', animation: 'txtIn 0.5s ease' }}>
+              {textCol}
+            </div>
+          );
+        })()}
         {modalOpen && project.image && <ImageModal image={project.image} onClose={() => setModalOpen(false)} />}
         {/* Carousel nav */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '24px', marginTop: '56px' }}>
