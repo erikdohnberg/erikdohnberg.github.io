@@ -1,0 +1,9 @@
+{
+  "pkg": "@erikdohnberg/design-system",
+  "globalName": "ErikDS",
+  "shape": "package",
+  "projectId": "e033cfb2-0692-44ae-96cd-621645d0bb1f",
+  "buildCmd": "npm run build",
+  "cssEntry": "dist/styles.css",
+  "readmeHeader": ".design-sync/conventions.md"
+}

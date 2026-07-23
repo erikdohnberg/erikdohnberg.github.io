@@ -1,0 +1,34 @@
+/* Erik Dohnberg Design System — design tokens
+ * The single source of truth for color, type, spacing, shape, and motion.
+ * Every component styles itself from these custom properties.
+ * Brand fonts are self-hosted — see fonts.css. */
+
+:root {
+  /* ── Color ──────────────────────────────────────────── */
+  --ed-color-accent: #ff9900;        /* the one signature color */
+  --ed-color-accent-hover: #ffb84d;  /* lightened, for hovers on dark */
+  --ed-color-ink: #333333;           /* primary text on light */
+  --ed-color-bg: #fdfcf8;            /* warm off-white page */
+  --ed-color-bg-paper: #faf6ef;      /* textured paper section */
+  --ed-color-bg-light: #ffffff;      /* clean white section */
+  --ed-color-bg-dark: #1f1d1b;       /* warm charcoal section */
+  --ed-color-cream: #f5f0e8;         /* text on dark */
+  --ed-color-muted-dark: #9a958d;    /* secondary text on dark */
+  --ed-color-muted-light: #888888;   /* captions/metadata on light */
+  --ed-color-hairline: rgba(51, 51, 51, 0.12);
+  --ed-color-hairline-dark: rgba(245, 240, 232, 0.12);
+
+  /* ── Type ───────────────────────────────────────────── */
+  --ed-font-display: 'Sanchez', serif;      /* headings, display */
+  --ed-font-body: 'Raleway', sans-serif;    /* body & UI */
+  --ed-font-accent: 'Caveat', cursive;      /* handwritten accents */
+
+  /* ── Shape & rhythm ─────────────────────────────────── */
+  --ed-radius: 4px;
+  --ed-measure: 640px;               /* readable text column */
+  --ed-section-padding: 120px;
+
+  /* ── Motion ─────────────────────────────────────────── */
+  --ed-ease-out-strong: cubic-bezier(0.23, 1, 0.32, 1);
+  --ed-transition: 0.3s;
+}

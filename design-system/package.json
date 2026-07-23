@@ -1,0 +1,43 @@
+{
+  "name": "@erikdohnberg/design-system",
+  "version": "0.1.0",
+  "description": "Erik Dohnberg brand component library — the primitives behind erikdohnberg.com.",
+  "private": true,
+  "type": "module",
+  "module": "./dist/index.js",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./styles.css": "./dist/styles.css"
+  },
+  "files": [
+    "dist",
+    "src/tokens.css",
+    "src/components.css",
+    "src/styles.css"
+  ],
+  "sideEffects": [
+    "*.css"
+  ],
+  "scripts": {
+    "build": "tsup && npm run build:css",
+    "build:css": "esbuild src/styles.css --bundle --outfile=dist/styles.css --loader:.woff=file --loader:.woff2=file"
+  },
+  "peerDependencies": {
+    "react": ">=18",
+    "react-dom": ">=18"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "esbuild": "^0.28.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "tsup": "^8.3.5",
+    "typescript": "^5.6.3"
+  }
+}
