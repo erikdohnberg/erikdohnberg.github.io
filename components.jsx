@@ -425,7 +425,7 @@ const PROUD_WORK_PROJECTS = [
       <>
         The only PM on the project. Built as a 1-800-Contacts competitor, but with{' '}
         <Annotation type="underline" text="the actual point" seed={4}>the optometrist back in the loop</Annotation>
-        {' '}— better margins for doctors, better continuity of care for patients, lower friction than the incumbents. ABB, the buying group behind Hello Abby, represents 23,000+ independent eye care professionals and 700M+ lens purchases annually. Published results: 3× lift in direct-to-patient sales, 300% over initial revenue target during MVP launch.
+        {' '}— better margins for doctors, better continuity of care for patients, lower friction than the incumbents. ABB, the buying group behind Hello Abby, represents 23,000+ independent eye care professionals and 700M+ lens purchases annually. <a href="https://www.bounteous.com/client-story/abb-optical/" target="_blank" rel="noopener" className="inline-link">Published results</a>: 3× lift in direct-to-patient sales, 300% over initial revenue target during MVP launch.
         <br /><br />
         🏆 MarCom Gold Award — Medical Website Category, 2023
       </>
@@ -531,9 +531,6 @@ const ProudWork = () => {
     <FadeSection id="proud" className="section section-light" style={{ padding: '120px 32px' }}>
       <div style={{ maxWidth: '880px', margin: '0 auto' }}>
         <IteratedTitle draft="Selected Work" final="Some work I'm proud of" />
-        <p className="body-text" style={{ marginBottom: '48px', marginTop: '8px', maxWidth: '640px' }}>
-          Real products that shipped, with real teams.
-        </p>
         {(() => {
           const textCol = (
             <div className="proud-text-col">
@@ -547,12 +544,12 @@ const ProudWork = () => {
           // Image items: two columns on desktop (text left, smaller image right),
           // stacked on mobile (image above text). Text-only items are unchanged.
           return project.image ? (
-            <div key={idx + '-txt'} className="proud-carousel-grid" style={{ animation: 'txtIn 0.5s ease' }}>
+            <div key={idx + '-txt'} className="proud-carousel-grid" style={{ marginTop: '40px', animation: 'txtIn 0.5s ease' }}>
               <ProjectImage image={project.image} onOpen={() => setModalOpen(true)} />
               {textCol}
             </div>
           ) : (
-            <div key={idx + '-txt'} style={{ maxWidth: '640px', animation: 'txtIn 0.5s ease' }}>
+            <div key={idx + '-txt'} style={{ maxWidth: '640px', marginTop: '40px', animation: 'txtIn 0.5s ease' }}>
               {textCol}
             </div>
           );
