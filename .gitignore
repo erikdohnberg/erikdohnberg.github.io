@@ -1,1 +1,4 @@
 node_modules/
+
+# Concept design source is provided out-of-band, not committed (see scripts/screenshot-compass.mjs)
+centric-forecasting-confidence-concept.html
