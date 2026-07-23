@@ -425,7 +425,7 @@ const PROUD_WORK_PROJECTS = [
       <>
         The only PM on the project. Built as a 1-800-Contacts competitor, but with{' '}
         <Annotation type="underline" text="the actual point" seed={4}>the optometrist back in the loop</Annotation>
-        {' '}— better margins for doctors, better continuity of care for patients, lower friction than the incumbents. ABB, the buying group behind Hello Abby, represents 23,000+ independent eye care professionals and 700M+ lens purchases annually. <a href="https://www.bounteous.com/client-story/abb-optical/" target="_blank" rel="noopener" className="inline-link">Published results</a>: 3× lift in direct-to-patient sales, 300% over initial revenue target during MVP launch.
+        {' '}— better margins for doctors, better continuity of care for patients, lower friction than the incumbents. ABB, the buying group behind Hello Abby, represents 23,000+ independent eye care professionals and 700M+ lens purchases annually. Published results: 3× lift in direct-to-patient sales, 300% over initial revenue target during MVP launch.
         <br /><br />
         🏆 MarCom Gold Award — Medical Website Category, 2023
       </>
@@ -531,6 +531,9 @@ const ProudWork = () => {
     <FadeSection id="proud" className="section section-light" style={{ padding: '120px 32px' }}>
       <div style={{ maxWidth: '880px', margin: '0 auto' }}>
         <IteratedTitle draft="Selected Work" final="Some work I'm proud of" />
+        <p className="body-text" style={{ marginBottom: '48px', marginTop: '8px', maxWidth: '640px' }}>
+          Real products that shipped, with real teams.
+        </p>
         {(() => {
           const textCol = (
             <div className="proud-text-col">
@@ -544,12 +547,12 @@ const ProudWork = () => {
           // Image items: two columns on desktop (text left, smaller image right),
           // stacked on mobile (image above text). Text-only items are unchanged.
           return project.image ? (
-            <div key={idx + '-txt'} className="proud-carousel-grid" style={{ marginTop: '40px', animation: 'txtIn 0.5s ease' }}>
+            <div key={idx + '-txt'} className="proud-carousel-grid" style={{ animation: 'txtIn 0.5s ease' }}>
               <ProjectImage image={project.image} onOpen={() => setModalOpen(true)} />
               {textCol}
             </div>
           ) : (
-            <div key={idx + '-txt'} style={{ maxWidth: '640px', marginTop: '40px', animation: 'txtIn 0.5s ease' }}>
+            <div key={idx + '-txt'} style={{ maxWidth: '640px', animation: 'txtIn 0.5s ease' }}>
               {textCol}
             </div>
           );
@@ -618,226 +621,204 @@ const TESTIMONIALS = [
     name: "Khaja Minhajuddin", role: "engineer, Ample Organics", relationship: "now Staff Software Engineer, Instacart" },
 ];
 
-// Fisher–Yates shuffle (non-mutating)
-const shuffleTestimonials = (arr) => {
-  const a = arr.slice();
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    const t = a[i]; a[i] = a[j]; a[j] = t;
-  }
-  return a;
-};
+// Auto-advance interval and crossfade duration (ms).
+const TESTIMONIAL_ADVANCE = 12000; // long enough to read a ~50-word quote
+const TESTIMONIAL_FADE = 200;
 
-// Order the pool so no two neighbours share a tag. The constraint is circular:
-// the rotation loops and shows a sliding 2-up window, so the wrap-around pair
-// (last, first) is visible too and must also differ. With 4 tags × 3 quotes a
-// valid circular arrangement always exists.
-const orderNoAdjacentTag = (items) => {
-  const circularOk = (arr) => {
-    for (let i = 0; i < arr.length; i++) {
-      if (arr[i].tag === arr[(i + 1) % arr.length].tag) return false;
-    }
-    return true;
-  };
-  for (let attempt = 0; attempt < 500; attempt++) {
-    const candidate = shuffleTestimonials(items);
-    if (circularOk(candidate)) return candidate;
-  }
-  // Greedy fallback: always place the tag with the most remaining quotes that
-  // differs from the previously placed one.
-  const pool = shuffleTestimonials(items);
-  const result = [];
-  while (pool.length) {
-    const counts = {};
-    pool.forEach((x) => { counts[x.tag] = (counts[x.tag] || 0) + 1; });
-    const lastTag = result.length ? result[result.length - 1].tag : null;
-    let pick = -1, best = -1;
-    for (let i = 0; i < pool.length; i++) {
-      if (pool[i].tag === lastTag) continue;
-      if (counts[pool[i].tag] > best) { best = counts[pool[i].tag]; pick = i; }
-    }
-    if (pick === -1) pick = 0;
-    result.push(pool.splice(pick, 1)[0]);
-  }
-  return result;
-};
+// Filter-tab labels and the kicker shown above each quote, keyed by tag.
+const TESTIMONIAL_TAG_LABELS = { ai: 'AI', leadership: 'Leadership', craft: 'Craft', collaboration: 'Collaboration' };
+const TESTIMONIAL_KICKERS = { ai: 'On AI', leadership: 'On leadership', craft: 'On the craft', collaboration: 'On collaboration' };
+const TESTIMONIAL_FILTERS = ['all', 'ai', 'leadership', 'craft', 'collaboration'];
 
-const TESTIMONIAL_GAP = 32;      // px, gutter between the two desktop cards
-const TESTIMONIAL_ADVANCE = 12000; // ms between auto-advances — long enough to read a ~50-word quote
-const TESTIMONIAL_FADE = 600;     // ms crossfade duration
-
-const TestimonialCard = ({ item, minH }) => (
-  <blockquote style={{
-    margin: 0, padding: '0 0 0 28px', borderLeft: '3px solid #ff9900',
-    minHeight: minH ? minH + 'px' : undefined,
-    display: 'flex', flexDirection: 'column',
-  }}>
-    <p style={{
-      fontFamily: "'Raleway', sans-serif", fontSize: '18px', color: '#f5f0e8',
-      lineHeight: 1.7, fontStyle: 'italic', margin: '0 0 14px', fontWeight: 300,
-      flexGrow: 1,
-    }}>
+// One quote's body — decorative mark, kicker, quote, attribution. Shared by the
+// live view and the hidden height-measurer so both wrap identically.
+const TestimonialQuote = ({ item }) => (
+  <React.Fragment>
+    <div aria-hidden="true" style={{ fontFamily: "'Sanchez', serif", fontSize: '64px', lineHeight: 0.55, color: '#ff9900', height: '36px' }}>“</div>
+    {TESTIMONIAL_KICKERS[item.tag] && (
+      <div style={{ fontFamily: "'Raleway', sans-serif", fontSize: '12px', fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#ff9900' }}>
+        {TESTIMONIAL_KICKERS[item.tag]}
+      </div>
+    )}
+    <p style={{ margin: 0, fontFamily: "'Raleway', sans-serif", fontSize: '22px', lineHeight: 1.65, fontWeight: 400, color: '#f5f0e8', textWrap: 'pretty', maxWidth: '760px' }}>
       {item.quote}
     </p>
-    <footer style={{ fontFamily: "'Raleway', sans-serif", fontSize: '14px', color: '#9a958d' }}>
-      — {item.name}, {item.role}, {item.relationship}
+    <footer style={{ display: 'flex', alignItems: 'baseline', gap: '14px', marginTop: '8px' }}>
+      <div style={{ width: '28px', height: '2px', background: '#ff9900', transform: 'translateY(-7px)', flex: 'none' }} />
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
+        <div style={{ display: 'flex', alignItems: 'baseline', gap: '12px', flexWrap: 'wrap' }}>
+          <span style={{ fontFamily: "'Sanchez', serif", fontSize: '19px', color: '#f5f0e8' }}>{item.name}</span>
+          {item.relationship && (
+            <span style={{ fontFamily: "'Caveat', cursive", fontSize: '21px', lineHeight: 1, color: '#ff9900' }}>{item.relationship}</span>
+          )}
+        </div>
+        <div style={{ fontSize: '14.5px', color: '#9a958d' }}>{item.role}</div>
+      </div>
     </footer>
-  </blockquote>
+  </React.Fragment>
 );
 
-// ── Testimonials (rotating) ───────────────────────────────────────────────────
+// ── Testimonials ──────────────────────────────────────────────────────────────
+// Filterable quote browser (per the "Quote Component" Claude Design redesign):
+// pick a category, page through with the arrows, or let it auto-advance.
 const Testimonials = () => {
-  const order = React.useMemo(() => orderNoAdjacentTag(TESTIMONIALS), []);
-  const N = order.length;
-
-  const getPerView = () =>
-    (typeof window !== 'undefined' && window.matchMedia('(max-width: 768px)').matches) ? 1 : 2;
-
-  const [perView, setPerView] = React.useState(getPerView);
-  const [containerW, setContainerW] = React.useState(0);
-  const [minH, setMinH] = React.useState(0);
-  const [frame, setFrame] = React.useState({ a: 0, b: 0, active: 'a' });
+  const [filter, setFilter] = React.useState('all');
+  const [index, setIndex] = React.useState(0);
+  const [fading, setFading] = React.useState(false);
   const [paused, setPaused] = React.useState(false);
+  const [minH, setMinH] = React.useState(0);
+  const [areaW, setAreaW] = React.useState(0);
 
-  const gridRef = React.useRef(null);
+  const fadeTimer = React.useRef(null);
+  const areaRef = React.useRef(null);
   const measureRef = React.useRef(null);
 
-  // Track available width + how many cards fit
+  const filtered = React.useMemo(
+    () => (filter === 'all' ? TESTIMONIALS : TESTIMONIALS.filter((t) => t.tag === filter)),
+    [filter]
+  );
+  const len = filtered.length;
+  const item = filtered[index] || {};
+
+  // Latest values for the auto-advance interval (avoids stale closures).
+  const latest = React.useRef({ filter, index, len });
+  latest.current = { filter, index, len };
+
+  // Crossfade: fade out, swap, fade back in. Instant under reduced motion.
+  const swap = React.useCallback((apply) => {
+    clearTimeout(fadeTimer.current);
+    if (REDUCED_MOTION) { apply(); setFading(false); return; }
+    setFading(true);
+    fadeTimer.current = setTimeout(() => { apply(); setFading(false); }, TESTIMONIAL_FADE);
+  }, []);
+
+  const goTo = React.useCallback((i) => {
+    const L = latest.current.len;
+    if (!L) return;
+    const next = ((i % L) + L) % L;
+    swap(() => setIndex(next));
+  }, [swap]);
+
+  const chooseFilter = React.useCallback((key) => {
+    if (key === latest.current.filter) return;
+    swap(() => { setFilter(key); setIndex(0); });
+  }, [swap]);
+
+  // Auto-advance through the current filter; pause on hover/focus, off under
+  // reduced motion. Re-armed on each settle so every step gets the full interval.
   React.useEffect(() => {
-    const el = gridRef.current;
+    if (REDUCED_MOTION || paused || len <= 1) return;
+    const id = setInterval(() => goTo(latest.current.index + 1), TESTIMONIAL_ADVANCE);
+    return () => clearInterval(id);
+  }, [paused, index, filter, len, goTo]);
+
+  React.useEffect(() => () => clearTimeout(fadeTimer.current), []);
+
+  // Track the quote area's width so the measurer wraps text identically.
+  React.useEffect(() => {
+    const el = areaRef.current;
     if (!el) return;
-    const update = () => { setContainerW(el.clientWidth); setPerView(getPerView()); };
+    const update = () => setAreaW(el.clientWidth);
     update();
     let ro;
-    if (typeof ResizeObserver !== 'undefined') {
-      ro = new ResizeObserver(update);
-      ro.observe(el);
-    }
+    if (typeof ResizeObserver !== 'undefined') { ro = new ResizeObserver(update); ro.observe(el); }
     window.addEventListener('resize', update);
     return () => { if (ro) ro.disconnect(); window.removeEventListener('resize', update); };
   }, []);
 
-  const cardW = perView > 1
-    ? Math.max(0, (containerW - TESTIMONIAL_GAP * (perView - 1)) / perView)
-    : containerW;
-
-  // Measure the tallest card at the current card width so height is fixed and
-  // transitions never cause layout shift.
-  React.useLayoutEffect(() => {
+  // Fix the area height to the tallest quote across ALL 12 (never just the
+  // current filter) so the frame never resizes when paging or filtering.
+  const measure = React.useCallback(() => {
     const el = measureRef.current;
-    if (!el || !cardW) return;
+    if (!el) return;
     let max = 0;
     for (const child of el.children) max = Math.max(max, child.offsetHeight);
-    if (max && Math.abs(max - minH) > 1) setMinH(max);
-  }, [cardW, perView, N]);
+    const target = Math.max(340, max);
+    setMinH((prev) => (Math.abs(target - prev) > 1 ? target : prev));
+  }, []);
 
-  // Re-measure once web fonts have loaded (font swap changes wrapping/height)
+  React.useLayoutEffect(() => { measure(); }, [areaW, measure]);
   React.useEffect(() => {
     if (typeof document === 'undefined' || !document.fonts || !document.fonts.ready) return;
     let cancelled = false;
-    document.fonts.ready.then(() => {
-      if (cancelled) return;
-      const el = measureRef.current;
-      if (!el || !cardW) return;
-      let max = 0;
-      for (const child of el.children) max = Math.max(max, child.offsetHeight);
-      if (max && Math.abs(max - minH) > 1) setMinH(max);
-    });
+    document.fonts.ready.then(() => { if (!cancelled) measure(); });
     return () => { cancelled = true; };
-  }, [cardW]);
+  }, [areaW, measure]);
 
-  const go = React.useCallback((dir) => {
-    setFrame((prev) => {
-      const cur = prev.active === 'a' ? prev.a : prev.b;
-      const next = ((cur + dir) % N + N) % N;
-      return prev.active === 'a'
-        ? { a: prev.a, b: next, active: 'b' }
-        : { a: next, b: prev.b, active: 'a' };
-    });
-  }, [N]);
-
-  // Auto-advance — disabled under reduced motion or while paused
-  React.useEffect(() => {
-    if (REDUCED_MOTION || paused) return;
-    const t = setInterval(() => go(1), TESTIMONIAL_ADVANCE);
-    return () => clearInterval(t);
-  }, [paused, go]);
-
-  const measured = minH > 0;
-
-  const Row = ({ startPos }) => (
-    <div style={{
-      display: 'grid',
-      gridTemplateColumns: `repeat(${perView}, minmax(0, 1fr))`,
-      gap: TESTIMONIAL_GAP + 'px',
-      alignItems: 'stretch',
-    }}>
-      {Array.from({ length: perView }).map((_, i) => {
-        const item = order[(startPos + i) % N];
-        return <TestimonialCard key={item.id} item={item} minH={minH} />;
-      })}
-    </div>
-  );
-
-  const layerStyle = (name) => {
-    if (!measured) {
-      // Pre-measurement: render only the active layer in normal flow so the
-      // container has a real height (no collapse, no overflow flash).
-      return name === frame.active ? {} : { display: 'none' };
-    }
-    const isActive = name === frame.active;
-    return {
-      position: 'absolute', top: 0, left: 0, right: 0,
-      opacity: isActive ? 1 : 0,
-      transition: REDUCED_MOTION ? 'none' : `opacity ${TESTIMONIAL_FADE}ms ease`,
-      pointerEvents: isActive ? 'auto' : 'none',
-    };
-  };
+  const tabStyle = (active) => ({
+    fontFamily: "'Raleway', sans-serif", fontSize: '13px', fontWeight: active ? 700 : 500,
+    letterSpacing: '0.04em', padding: '7px 15px', borderRadius: '100px', cursor: 'pointer',
+    transition: 'all 200ms',
+    border: active ? '1px solid #ff9900' : '1px solid rgba(245,240,232,.12)',
+    background: active ? 'rgba(255,153,0,0.10)' : 'transparent',
+    color: active ? '#ff9900' : '#9a958d',
+  });
 
   return (
     <FadeSection id="testimonials" className="section section-dark" data-dark-section="true" style={{ padding: '120px 32px' }}>
-      <div style={{ maxWidth: '900px', margin: '0 auto' }}>
-        <h2 className="section-header section-header-dark">What it's like working with me</h2>
-
-        <div
-          onMouseEnter={() => setPaused(true)}
-          onMouseLeave={() => setPaused(false)}
-          onFocus={() => setPaused(true)}
-          onBlur={() => setPaused(false)}
-          style={{ marginTop: '32px' }}
-        >
-          {/* Crossfading window of quote cards */}
-          <div
-            ref={gridRef}
-            role="group"
-            aria-roledescription="carousel"
-            aria-label="Testimonials"
-            style={{ position: 'relative', height: measured ? minH + 'px' : 'auto' }}
-          >
-            <div style={layerStyle('a')}><Row startPos={frame.a} /></div>
-            <div style={layerStyle('b')}><Row startPos={frame.b} /></div>
-          </div>
-
-          {/* Prev / next controls */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '24px', marginTop: '40px' }}>
-            <button onClick={() => go(-1)} className="carousel-btn-dark" aria-label="Previous testimonials">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6" /></svg>
-            </button>
-            <button onClick={() => go(1)} className="carousel-btn-dark" aria-label="Next testimonials">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6" /></svg>
-            </button>
+      <div
+        onMouseEnter={() => setPaused(true)}
+        onMouseLeave={() => setPaused(false)}
+        onFocus={() => setPaused(true)}
+        onBlur={() => setPaused(false)}
+        style={{ maxWidth: '960px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '40px' }}
+      >
+        {/* Header + filter tabs */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          <h2 className="section-header section-header-dark">What it's like working with me</h2>
+          <div role="group" aria-label="Filter testimonials by category" style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+            {TESTIMONIAL_FILTERS.map((key) => {
+              const active = key === filter;
+              return (
+                <button key={key} type="button" aria-pressed={active} onClick={() => chooseFilter(key)} style={tabStyle(active)}>
+                  {key === 'all' ? 'All' : TESTIMONIAL_TAG_LABELS[key]}
+                </button>
+              );
+            })}
           </div>
         </div>
 
-        {/* Off-screen measurer: every quote rendered at the live card width so we
-            can fix the card height to the tallest and avoid layout shift. */}
+        {/* Quote area — fixed min-height, crossfading content */}
         <div
-          ref={measureRef}
-          aria-hidden="true"
-          style={{ position: 'absolute', top: 0, left: '-99999px', width: cardW ? cardW + 'px' : '440px', visibility: 'hidden', pointerEvents: 'none' }}
+          ref={areaRef}
+          role="group"
+          aria-roledescription="carousel"
+          aria-label="Testimonials"
+          style={{ minHeight: (minH || 340) + 'px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
         >
-          {TESTIMONIALS.map((item) => (
-            <TestimonialCard key={item.id} item={item} minH={0} />
+          <blockquote
+            style={{
+              margin: 0, opacity: fading ? 0 : 1,
+              transition: REDUCED_MOTION ? 'none' : `opacity ${TESTIMONIAL_FADE}ms ${EASE_OUT_STRONG}`,
+              display: 'flex', flexDirection: 'column', gap: '22px',
+            }}
+          >
+            {item.quote && <TestimonialQuote item={item} />}
+          </blockquote>
+        </div>
+
+        {/* Controls: prev / next + counter */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '20px', borderTop: '1px solid rgba(245,240,232,.12)', paddingTop: '24px' }}>
+          <div style={{ display: 'flex', gap: '12px' }}>
+            <button type="button" aria-label="Previous testimonial" className="carousel-btn-dark" onClick={() => goTo(index - 1)}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6" /></svg>
+            </button>
+            <button type="button" aria-label="Next testimonial" className="carousel-btn-dark" onClick={() => goTo(index + 1)}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6" /></svg>
+            </button>
+          </div>
+          <div style={{ fontFamily: "'Raleway', sans-serif", fontSize: '14px', letterSpacing: '0.04em', color: '#9a958d' }}>
+            {len ? `${index + 1} / ${len}` : '—'}
+          </div>
+        </div>
+
+        {/* Off-screen measurer: every quote at the live width, so the area height
+            covers the tallest and never shifts between transitions or filters. */}
+        <div ref={measureRef} aria-hidden="true" style={{ position: 'absolute', left: '-99999px', top: 0, width: areaW ? areaW + 'px' : '760px', visibility: 'hidden', pointerEvents: 'none' }}>
+          {TESTIMONIALS.map((t) => (
+            <div key={t.id} style={{ display: 'flex', flexDirection: 'column', gap: '22px' }}>
+              <TestimonialQuote item={t} />
+            </div>
           ))}
         </div>
       </div>
