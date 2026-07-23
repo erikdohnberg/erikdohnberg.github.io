@@ -621,55 +621,52 @@ const TESTIMONIALS = [
     name: "Khaja Minhajuddin", role: "now Staff Software Engineer, Instacart", relationship: "former engineer, Ample Organics" },
 ];
 
-// Auto-advance interval and crossfade duration (ms).
+// Auto-advance interval and per-change animation duration (ms).
 const TESTIMONIAL_ADVANCE = 8000; // one quote at a time reads faster than the old 2-up
-const TESTIMONIAL_FADE = 200;
+const TESTIMONIAL_ANIM = 320;
 
 // Filter-tab labels and the kicker shown above each quote, keyed by tag.
 const TESTIMONIAL_TAG_LABELS = { ai: 'AI', leadership: 'Leadership', craft: 'Craft', collaboration: 'Collaboration' };
 const TESTIMONIAL_KICKERS = { ai: 'On AI', leadership: 'On leadership', craft: 'On the craft', collaboration: 'On collaboration' };
 const TESTIMONIAL_FILTERS = ['all', 'ai', 'leadership', 'craft', 'collaboration'];
 
-// One quote's body — decorative mark, kicker, quote, attribution. Shared by the
-// live view and the hidden height-measurer so both wrap identically.
+// One quote's body — kicker, quote, attribution. Shared by the live view and the
+// hidden height-measurer so both wrap identically. (The oversized watermark quote
+// mark sits behind this, positioned absolutely, so it isn't part of the flow.)
 const TestimonialQuote = ({ item }) => (
   <React.Fragment>
-    <div aria-hidden="true" style={{ fontFamily: "'Sanchez', serif", fontSize: '64px', lineHeight: 0.55, color: '#ff9900', height: '36px' }}>“</div>
     {TESTIMONIAL_KICKERS[item.tag] && (
-      <div style={{ fontFamily: "'Raleway', sans-serif", fontSize: '12px', fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#ff9900' }}>
+      <div style={{ fontFamily: "'Raleway', sans-serif", fontSize: '12px', fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#ff9900', marginBottom: '16px' }}>
         {TESTIMONIAL_KICKERS[item.tag]}
       </div>
     )}
-    <p style={{ margin: 0, fontFamily: "'Raleway', sans-serif", fontSize: '22px', lineHeight: 1.65, fontWeight: 400, color: '#f5f0e8', textWrap: 'pretty', maxWidth: '760px' }}>
+    <blockquote style={{ margin: 0, fontFamily: "'Raleway', sans-serif", fontSize: '23px', lineHeight: 1.6, fontWeight: 400, color: '#f5f0e8', textWrap: 'pretty', maxWidth: '720px' }}>
       {item.quote}
-    </p>
-    <footer style={{ display: 'flex', alignItems: 'baseline', gap: '14px', marginTop: '8px' }}>
-      <div style={{ width: '28px', height: '2px', background: '#ff9900', transform: 'translateY(-7px)', flex: 'none' }} />
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
-        <div style={{ display: 'flex', alignItems: 'baseline', gap: '12px', flexWrap: 'wrap' }}>
-          <span style={{ fontFamily: "'Sanchez', serif", fontSize: '19px', color: '#f5f0e8' }}>{item.name}</span>
-          {item.relationship && (
-            <span style={{ fontFamily: "'Caveat', cursive", fontSize: '21px', lineHeight: 1, color: '#ff9900' }}>{item.relationship}</span>
-          )}
-        </div>
-        <div style={{ fontSize: '14.5px', color: '#9a958d' }}>{item.role}</div>
+    </blockquote>
+    <footer style={{ marginTop: '32px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: '12px', flexWrap: 'wrap' }}>
+        <span style={{ fontFamily: "'Sanchez', serif", fontSize: '19px', color: '#f5f0e8' }}>{item.name}</span>
+        {item.relationship && (
+          <span style={{ fontFamily: "'Caveat', cursive", fontSize: '22px', lineHeight: 1, color: '#ff9900' }}>{item.relationship}</span>
+        )}
       </div>
+      <div style={{ fontSize: '14.5px', color: '#9a958d' }}>{item.role}</div>
     </footer>
   </React.Fragment>
 );
 
 // ── Testimonials ──────────────────────────────────────────────────────────────
 // Filterable quote browser (per the "Quote Component" Claude Design redesign):
-// pick a category, page through with the arrows, or let it auto-advance.
+// pick a category, page through with the arrows, or let it auto-advance. Each
+// change fades the new quote up into place behind an oversized quotation mark.
 const Testimonials = () => {
   const [filter, setFilter] = React.useState('all');
   const [index, setIndex] = React.useState(0);
-  const [fading, setFading] = React.useState(false);
+  const [token, setToken] = React.useState(0); // bumps on each change to replay the fade-up
   const [paused, setPaused] = React.useState(false);
   const [minH, setMinH] = React.useState(0);
   const [areaW, setAreaW] = React.useState(0);
 
-  const fadeTimer = React.useRef(null);
   const areaRef = React.useRef(null);
   const measureRef = React.useRef(null);
 
@@ -684,25 +681,20 @@ const Testimonials = () => {
   const latest = React.useRef({ filter, index, len });
   latest.current = { filter, index, len };
 
-  // Crossfade: fade out, swap, fade back in. Instant under reduced motion.
-  const swap = React.useCallback((apply) => {
-    clearTimeout(fadeTimer.current);
-    if (REDUCED_MOTION) { apply(); setFading(false); return; }
-    setFading(true);
-    fadeTimer.current = setTimeout(() => { apply(); setFading(false); }, TESTIMONIAL_FADE);
-  }, []);
-
   const goTo = React.useCallback((i) => {
     const L = latest.current.len;
     if (!L) return;
     const next = ((i % L) + L) % L;
-    swap(() => setIndex(next));
-  }, [swap]);
+    setIndex(next);
+    setToken((t) => t + 1);
+  }, []);
 
   const chooseFilter = React.useCallback((key) => {
     if (key === latest.current.filter) return;
-    swap(() => { setFilter(key); setIndex(0); });
-  }, [swap]);
+    setFilter(key);
+    setIndex(0);
+    setToken((t) => t + 1);
+  }, []);
 
   // Auto-advance through the current filter; pause on hover/focus, off under
   // reduced motion. Re-armed on each settle so every step gets the full interval.
@@ -711,8 +703,6 @@ const Testimonials = () => {
     const id = setInterval(() => goTo(latest.current.index + 1), TESTIMONIAL_ADVANCE);
     return () => clearInterval(id);
   }, [paused, index, filter, len, goTo]);
-
-  React.useEffect(() => () => clearTimeout(fadeTimer.current), []);
 
   // Track the quote area's width so the measurer wraps text identically.
   React.useEffect(() => {
@@ -733,7 +723,7 @@ const Testimonials = () => {
     if (!el) return;
     let max = 0;
     for (const child of el.children) max = Math.max(max, child.offsetHeight);
-    const target = Math.max(340, max);
+    const target = Math.max(300, max);
     setMinH((prev) => (Math.abs(target - prev) > 1 ? target : prev));
   }, []);
 
@@ -778,27 +768,32 @@ const Testimonials = () => {
           </div>
         </div>
 
-        {/* Quote area — fixed min-height, crossfading content */}
+        {/* Quote area — oversized watermark mark behind a fade-up quote */}
         <div
           ref={areaRef}
           role="group"
           aria-roledescription="carousel"
           aria-label="Testimonials"
-          style={{ minHeight: (minH || 340) + 'px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
+          style={{ minHeight: (minH || 300) + 'px', display: 'flex', position: 'relative' }}
         >
-          <blockquote
+          <div aria-hidden="true" style={{ position: 'absolute', top: '-46px', left: '-36px', fontFamily: "'Caveat', cursive", fontWeight: 700, fontSize: '400px', lineHeight: 0.8, color: '#ff9900', opacity: 0.10, pointerEvents: 'none', userSelect: 'none', zIndex: 0 }}>
+            “
+          </div>
+          <div
+            key={token}
             style={{
-              margin: 0, opacity: fading ? 0 : 1,
-              transition: REDUCED_MOTION ? 'none' : `opacity ${TESTIMONIAL_FADE}ms ${EASE_OUT_STRONG}`,
-              display: 'flex', flexDirection: 'column', gap: '22px',
+              animation: REDUCED_MOTION ? 'none' : `testimonialIn ${TESTIMONIAL_ANIM}ms ${EASE_OUT_STRONG}`,
+              position: 'relative', zIndex: 1, display: 'flex', width: '100%',
             }}
           >
-            {item.quote && <TestimonialQuote item={item} />}
-          </blockquote>
+            <div style={{ display: 'flex', flexDirection: 'column', paddingTop: '14px' }}>
+              {item.quote && <TestimonialQuote item={item} />}
+            </div>
+          </div>
         </div>
 
-        {/* Controls: prev / next + counter */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '20px', borderTop: '1px solid rgba(245,240,232,.12)', paddingTop: '24px' }}>
+        {/* Controls: prev / next + counter, centered */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '20px', borderTop: '1px solid rgba(245,240,232,.12)', paddingTop: '28px' }}>
           <div style={{ display: 'flex', gap: '12px' }}>
             <button type="button" aria-label="Previous testimonial" className="carousel-btn-dark" onClick={() => goTo(index - 1)}>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6" /></svg>
@@ -814,9 +809,9 @@ const Testimonials = () => {
 
         {/* Off-screen measurer: every quote at the live width, so the area height
             covers the tallest and never shifts between transitions or filters. */}
-        <div ref={measureRef} aria-hidden="true" style={{ position: 'absolute', left: '-99999px', top: 0, width: areaW ? areaW + 'px' : '760px', visibility: 'hidden', pointerEvents: 'none' }}>
+        <div ref={measureRef} aria-hidden="true" style={{ position: 'absolute', left: '-99999px', top: 0, width: areaW ? areaW + 'px' : '720px', visibility: 'hidden', pointerEvents: 'none' }}>
           {TESTIMONIALS.map((t) => (
-            <div key={t.id} style={{ display: 'flex', flexDirection: 'column', gap: '22px' }}>
+            <div key={t.id} style={{ display: 'flex', flexDirection: 'column', paddingTop: '14px' }}>
               <TestimonialQuote item={t} />
             </div>
           ))}
