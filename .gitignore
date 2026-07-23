@@ -8,3 +8,6 @@ ds-bundle/
 .design-sync/node_modules
 design-system/node_modules/
 design-system/dist/
+
+# Concept design source is provided out-of-band, not committed (see scripts/screenshot-compass.mjs)
+centric-forecasting-confidence-concept.html

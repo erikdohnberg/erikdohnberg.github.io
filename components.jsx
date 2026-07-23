@@ -95,7 +95,7 @@ const Hero = () => {
         {/* Role */}
         {stage >= 3 && (
           <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: 'clamp(13px, 2.5vw, 15px)', color: '#888', letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: '28px', marginTop: '4px' }}>
-            Senior Product Manager · Toronto
+            Senior Product Leader · Toronto
           </p>
         )}
 
@@ -134,8 +134,9 @@ const Hero = () => {
           transform: stage >= 5 ? 'translateY(0)' : 'translateY(8px)',
           transition: `opacity 0.6s ${EASE_OUT_STRONG} 0.3s, transform 0.6s ${EASE_OUT_STRONG} 0.3s`,
         }}>
-          <a href="https://www.linkedin.com/in/erik-dohnberg-019b9b65" target="_blank" rel="noopener" className="hero-link">LinkedIn ↗</a>
+          <a href="https://www.linkedin.com/in/erik-dohnberg/" target="_blank" rel="noopener" className="hero-link">LinkedIn ↗</a>
           <a href="https://substack.com/@heyerikd" target="_blank" rel="noopener" className="hero-link">Substack ↗</a>
+          <a href="https://github.com/erikdohnberg" target="_blank" rel="noopener" className="hero-link">GitHub ↗</a>
         </div>
       </div>
 
@@ -210,7 +211,7 @@ const TopBar = () => {
         </span>
       </button>
       <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-        <a href="https://www.linkedin.com/in/erik-dohnberg-019b9b65" target="_blank" rel="noopener" aria-label="LinkedIn" className="topbar-icon" style={{ color: tc }}>
+        <a href="https://www.linkedin.com/in/erik-dohnberg/" target="_blank" rel="noopener" aria-label="LinkedIn" className="topbar-icon" style={{ color: tc }}>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
             <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
           </svg>
@@ -236,7 +237,7 @@ const About = () => (
     <div style={{ maxWidth: '640px', margin: '0 auto' }}>
       <h2 className="section-header" style={{ marginBottom: '28px' }}>About</h2>
       <p className="body-text" style={{ marginBottom: '24px' }}>
-        I'm a Senior PM based in Toronto. I've shipped products in multiple industries including social media, healthcare, heavily regulated supply-chain software, food operations software, and D2C retail. The contexts look different, but <strong>the actual problems — user adoption, competitor pressure, regulatory fog, constant prioritization under uncertainty — show up time and time again.</strong> Once you've seen the pattern enough times, you can focus on the craft of good product strategy and delivery.
+        I'm a Senior Product Leader based in Toronto. I've shipped products in multiple industries including social media, healthcare, heavily regulated supply-chain software, food operations software, and D2C retail. The contexts look different, but <strong>the actual problems — user adoption, competitor pressure, regulatory fog, constant prioritization under uncertainty — show up time and time again.</strong> Once you've seen the pattern enough times, you can focus on the craft of good product strategy and delivery.
       </p>
       <p className="body-text" style={{ marginBottom: '24px' }}>
         I've been building AI-powered products since 2023 — ML-curated content feeds at 500px, LLM-integrated decision tools, and ML Forecasting Models for enterprise food operators. I'm <strong>outcome-driven, not output-driven.</strong> Code is cheaper than ever. <em>What you choose to build is the whole game.</em> I do my best work on small teams with clear ownership, leadership that's still close to the work, and a bias toward shipping.
@@ -386,6 +387,25 @@ const SideProjects = () => (
 // ── Proud Work ────────────────────────────────────────────────────────────────
 const PROUD_WORK_PROJECTS = [
   {
+    title: 'ML Demand Forecasting for Compass Group\'s Kitchens',
+    tagline: 'Daily forecasts, tailored to every site – and honest about their own confidence.',
+    image: {
+      webp: 'images/compass-forecasting.webp',
+      png: 'images/compass-forecasting.png',
+      width: 1440,
+      height: 900,
+      alt: 'Concept design of Centric\'s forecasting production sheet showing item-level confidence flags and an explanation popover (sample data)',
+      caption: 'Concept design · sample data',
+    },
+    body: (
+      <>
+        Demand forecasting for Compass Group's North American kitchens. Machine-learning models train daily on each site's own sales history, so every location gets projections tailored to how it actually sells, and operators know what to prep tomorrow. I'm proudest of the trajectory: successive releases kept cutting the error rate – one by roughly 23% on core items – until an operator described the forecasts as "scary accurate."
+      </>
+    ),
+    role: '— Senior PM at Compass Digital, 2024–2026.',
+    link: { href: 'https://www.compassdigital.io/case-study/demand-forecasting-using-data-to-fight-food-waste/', label: '→ Compass Digital\'s case study on the program' },
+  },
+  {
     title: '500px\'s AI-Personalized Content Feeds',
     tagline: 'The platform\'s largest content discovery overhaul in years — shipped to a global community of 15M+ creators.',
     body: (
@@ -396,7 +416,7 @@ const PROUD_WORK_PROJECTS = [
       </>
     ),
     role: '— Senior PM at 500px, 2023.',
-    link: { href: 'https://500px.com/explore', label: '→ Live' },
+    link: { href: 'https://500px.com/explore', label: '→ 500px.com' },
   },
   {
     title: 'ABB Optical\'s Optometrist-First Lens-Ordering Platform',
@@ -405,7 +425,7 @@ const PROUD_WORK_PROJECTS = [
       <>
         The only PM on the project. Built as a 1-800-Contacts competitor, but with{' '}
         <Annotation type="underline" text="the actual point" seed={4}>the optometrist back in the loop</Annotation>
-        {' '}— better margins for doctors, better continuity of care for patients, lower friction than the incumbents. ABB, the buying group behind Hello Abby, represents 23,000+ independent eye care professionals and 700M+ lens purchases annually. Published results: 3× lift in direct-to-patient sales, 300% over initial revenue target during MVP launch.
+        {' '}— better margins for doctors, better continuity of care for patients, lower friction than the incumbents. ABB, the buying group behind Hello Abby, represents 23,000+ independent eye care professionals and 700M+ lens purchases annually. <a href="https://www.bounteous.com/client-story/abb-optical/" target="_blank" rel="noopener" className="inline-link">Published results</a>: 3× lift in direct-to-patient sales, 300% over initial revenue target during MVP launch.
         <br /><br />
         🏆 MarCom Gold Award — Medical Website Category, 2023
       </>
@@ -437,72 +457,393 @@ const PROUD_WORK_PROJECTS = [
   },
 ];
 
+// ── ProjectImage ──────────────────────────────────────────────────────────────
+// Optional carousel image slot. Only rendered for items that carry an `image`;
+// items without one render exactly as before (no placeholder, no reserved space).
+// WebP with PNG fallback, lazy-loaded, click/Enter/Space opens a larger modal.
+const ProjectImage = ({ image, onOpen }) => (
+  <figure className="proud-image" style={{ margin: 0 }}>
+    <button type="button" onClick={onOpen} aria-label="Open larger image"
+      className="project-image-btn"
+      style={{ display: 'block', width: '100%', padding: 0, border: 'none', background: 'none',
+        cursor: 'zoom-in', borderRadius: '8px', lineHeight: 0 }}>
+      <picture>
+        <source srcSet={image.webp} type="image/webp" />
+        <img src={image.png} alt={image.alt} width={image.width} height={image.height}
+          loading="lazy" decoding="async"
+          style={{ display: 'block', width: '100%', height: 'auto', borderRadius: '8px',
+            border: '1px solid rgba(20,14,5,0.10)', boxShadow: '0 18px 40px rgba(20,14,5,0.12)' }} />
+      </picture>
+    </button>
+    <figcaption style={{ fontFamily: "'Raleway', sans-serif", fontSize: '13px', color: '#999',
+      marginTop: '10px', letterSpacing: '.01em' }}>{image.caption}</figcaption>
+  </figure>
+);
+
+// ── ImageModal ────────────────────────────────────────────────────────────────
+// Dismiss via the X button, a click outside the image, or the ESC key.
+// Rendered through a portal on document.body so it always centres on the
+// viewport — nesting it under FadeSection's transform would otherwise anchor
+// the fixed overlay to that section instead of the page.
+const ImageModal = ({ image, onClose }) => {
+  React.useEffect(() => {
+    const onKey = e => { if (e.key === 'Escape') onClose(); };
+    document.addEventListener('keydown', onKey);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.removeEventListener('keydown', onKey); document.body.style.overflow = prevOverflow; };
+  }, [onClose]);
+  return ReactDOM.createPortal(
+    <div onClick={onClose} role="dialog" aria-modal="true" aria-label={image.alt}
+      style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(20,14,5,0.82)',
+        backdropFilter: 'blur(4px)', WebkitBackdropFilter: 'blur(4px)',
+        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+        padding: '24px' }}>
+      <button onClick={onClose} aria-label="Close image"
+        style={{ position: 'fixed', top: '20px', right: '24px', width: '40px', height: '40px',
+          border: 'none', borderRadius: '50%', background: 'rgba(255,255,255,.12)', color: '#f5f0e8',
+          cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }}>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18M6 6l12 12" /></svg>
+      </button>
+      <figure onClick={e => e.stopPropagation()} style={{ margin: 0, display: 'flex', flexDirection: 'column',
+        alignItems: 'center', gap: '12px', maxWidth: 'min(1200px, 96vw)', maxHeight: '92vh' }}>
+        <picture>
+          <source srcSet={image.webp} type="image/webp" />
+          <img src={image.png} alt={image.alt}
+            style={{ display: 'block', maxWidth: '100%', maxHeight: '82vh', width: 'auto', height: 'auto',
+              objectFit: 'contain', borderRadius: '8px', boxShadow: '0 30px 70px rgba(0,0,0,.55)' }} />
+        </picture>
+        <figcaption style={{ fontFamily: "'Raleway', sans-serif", fontSize: '13px', color: '#c9c3b8', textAlign: 'center' }}>{image.caption}</figcaption>
+      </figure>
+    </div>,
+    document.body
+  );
+};
+
+// ── Proud Work ────────────────────────────────────────────────────────────────
 const ProudWork = () => {
   const [idx, setIdx] = React.useState(0);
+  const [modalOpen, setModalOpen] = React.useState(false);
   const total = PROUD_WORK_PROJECTS.length;
   const project = PROUD_WORK_PROJECTS[idx];
+  const go = React.useCallback(next => { setModalOpen(false); setIdx(next); }, []);
   return (
     <FadeSection id="proud" className="section section-light" style={{ padding: '120px 32px' }}>
       <div style={{ maxWidth: '880px', margin: '0 auto' }}>
         <IteratedTitle draft="Selected Work" final="Some work I'm proud of" />
-        <p className="body-text" style={{ marginBottom: '48px', marginTop: '8px', maxWidth: '640px' }}>
-          Four industries. Real products that shipped, with real teams.
-        </p>
-        {/* TODO: Restore two-column grid (screenshot + text) once real screenshots are added.
-             Add: <div style={{ aspectRatio:'4/3', borderRadius:'6px', overflow:'hidden', boxShadow:'0 18px 40px rgba(20,14,5,0.12)' }}>
-                    <img src="images/<project>.png" alt="..." style={{ width:'100%', height:'100%', objectFit:'cover' }} />
-                  </div> */}
-        <div key={idx + '-txt'} style={{ maxWidth: '640px', animation: 'txtIn 0.5s ease' }}>
-          <h3 style={{ fontFamily: "'Sanchez', serif", fontSize: '28px', color: '#333', margin: '0 0 6px' }}>{project.title}</h3>
-          <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: '15px', color: '#999', fontStyle: 'italic', margin: '0 0 22px' }}>{project.tagline}</p>
-          <p className="body-text" style={{ marginBottom: '20px' }}>{project.body}</p>
-          <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: '14px', color: '#888', margin: '0 0 16px', fontStyle: 'italic' }}>{project.role}</p>
-          {project.link && <a href={project.link.href} target="_blank" rel="noopener" className="inline-link">{project.link.label}</a>}
-        </div>
+        {(() => {
+          const textCol = (
+            <div className="proud-text-col">
+              <h3 style={{ fontFamily: "'Sanchez', serif", fontSize: '28px', color: '#333', margin: '0 0 6px' }}>{project.title}</h3>
+              <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: '15px', color: '#999', fontStyle: 'italic', margin: '0 0 22px' }}>{project.tagline}</p>
+              <p className="body-text" style={{ marginBottom: '20px' }}>{project.body}</p>
+              <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: '14px', color: '#888', margin: '0 0 16px', fontStyle: 'italic' }}>{project.role}</p>
+              {project.link && <a href={project.link.href} target="_blank" rel="noopener" className="inline-link">{project.link.label}</a>}
+            </div>
+          );
+          // Image items: two columns on desktop (text left, smaller image right),
+          // stacked on mobile (image above text). Text-only items are unchanged.
+          return project.image ? (
+            <div key={idx + '-txt'} className="proud-carousel-grid" style={{ marginTop: '40px', animation: 'txtIn 0.5s ease' }}>
+              <ProjectImage image={project.image} onOpen={() => setModalOpen(true)} />
+              {textCol}
+            </div>
+          ) : (
+            <div key={idx + '-txt'} style={{ maxWidth: '640px', marginTop: '40px', animation: 'txtIn 0.5s ease' }}>
+              {textCol}
+            </div>
+          );
+        })()}
+        {modalOpen && project.image && <ImageModal image={project.image} onClose={() => setModalOpen(false)} />}
         {/* Carousel nav */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '24px', marginTop: '56px' }}>
-          <button onClick={() => setIdx(i => (i - 1 + total) % total)} className="carousel-btn" aria-label="Previous">
+          <button onClick={() => go((idx - 1 + total) % total)} className="carousel-btn" aria-label="Previous">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6" /></svg>
           </button>
           <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: '14px', color: '#888', minWidth: '40px', textAlign: 'center' }}>
             {idx + 1}/{total}
           </span>
-          <button onClick={() => setIdx(i => (i + 1) % total)} className="carousel-btn" aria-label="Next">
+          <button onClick={() => go((idx + 1) % total)} className="carousel-btn" aria-label="Next">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6" /></svg>
           </button>
         </div>
         <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: '14px', color: '#888', textAlign: 'center', marginTop: '28px' }}>
-          <a href="https://www.linkedin.com/in/erik-dohnberg-019b9b65" target="_blank" rel="noopener" className="inline-link">Full timeline on LinkedIn ↗</a>
+          <a href="https://www.linkedin.com/in/erik-dohnberg/" target="_blank" rel="noopener" className="inline-link">Full timeline on LinkedIn ↗</a>
         </p>
       </div>
     </FadeSection>
   );
 };
 
-// ── Testimonials ──────────────────────────────────────────────────────────────
-const Testimonials = () => (
-  <FadeSection id="testimonials" className="section section-dark" data-dark-section="true" style={{ padding: '120px 32px' }}>
-    <div style={{ maxWidth: '640px', margin: '0 auto' }}>
-      <h2 className="section-header section-header-dark">What it's like working with me</h2>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '40px', marginTop: '24px' }}>
-        {[
-          { quote: "While at 500px, Erik delivered a complex content feed experience working with the AI teams, development, and design to launch a personalized feed of posts and photos to millions of users. Erik is one of the good ones and would be a great addition to any growing product team.", name: "James Manson", title: "VP of Products at 500px, Erik's direct manager" },
-          { quote: "Erik consistently proved himself as the go-to problem solver when the team faced ambiguity, changing priorities, or tight deadlines. I have no reservations in saying that Erik would make an immediate and transformative impact on any team he joins.", name: "Anas Herzallah", title: "Associate Product Manager at Bounteous, Erik's direct report" },
-          { quote: "Erik's communication-first mindset to product management ensures that the right opinions are heard up front. Combine that with his focus on ruthlessly defining problems before solving them and you are set up for success.", name: "Will Badger", title: "Product Manager at Ample Organics, peer" },
-        ].map((t, i) => (
-          <blockquote key={i} style={{ margin: 0, padding: '0 0 0 28px', borderLeft: '3px solid #ff9900' }}>
-            <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: '19px', color: '#f5f0e8', lineHeight: 1.7, fontStyle: 'italic', margin: '0 0 10px', fontWeight: 300 }}>
-              "{t.quote}"
-            </p>
-            <footer style={{ fontFamily: "'Raleway', sans-serif", fontSize: '14px', color: '#9a958d' }}>
-              — {t.name}, {t.title}
-            </footer>
-          </blockquote>
-        ))}
-      </div>
-    </div>
-  </FadeSection>
+// ── Testimonials data ─────────────────────────────────────────────────────────
+// Verbatim excerpts from real LinkedIn recommendations. Do NOT edit the quote,
+// name, role, or relationship strings — punctuation, ellipses (…), em dashes (—)
+// and apostrophes (’) are intentional and must render character-for-character.
+const TESTIMONIALS = [
+  { id: "laba", tag: "ai",
+    quote: "Erik was a huge boon to the team in our transformation to an AI focus and helped all of us level up… Something that I appreciate about Erik’s work was how he established supporting docs, and sustainable approaches that allowed others to build off the work he led.",
+    name: "Jonathan Laba", role: "Senior Product Manager, Compass Digital", relationship: "peer" },
+  { id: "manson", tag: "ai",
+    quote: "While at 500px he delivered a complex content feed experience working with the AI teams, development, and design to launch a personalized feed of posts and photos to millions of 500px users.",
+    name: "James Manson", role: "VP of Products, 500px", relationship: "Erik’s direct manager" },
+  { id: "sluchevsky", tag: "ai",
+    quote: "Erik had a knack for spotting problem spaces where data and AI could make a real difference.",
+    name: "Ally Sluchevsky", role: "Senior Director of Product Management, Compass Digital", relationship: "Erik’s manager, Data & AI team" },
+  { id: "herzallah", tag: "leadership",
+    quote: "Erik stands out as one of the most remarkable managers I’ve had the privilege to work under… He consistently proved himself as the go-to problem solver when the team faced ambiguity, changing priorities, or tight deadlines.",
+    name: "Anas Herzallah", role: "Associate Product Manager, Bounteous", relationship: "Erik’s direct report" },
+  { id: "mcloughlin", tag: "leadership",
+    quote: "I cannot more highly recommend Erik than to say, if I were starting a company tomorrow, I’d be trying to figure out how to hire him today.",
+    name: "Kevin McLoughlin", role: "now Chief Product Officer, Dr.Bill", relationship: "met Erik as a Bitmaker student" },
+  { id: "stpierre", tag: "leadership",
+    quote: "He was our first full time product manager and has worked to help build out the team and establish best practices for building products at Ample.",
+    name: "Rigel St Pierre", role: "engineering colleague, Ample Organics", relationship: "now Head of Engineering, Rootly" },
+  { id: "badger", tag: "craft",
+    quote: "His communication-first mindset to product management ensures that the right opinions are heard up front. Combine that with his focus on ruthlessly defining problems before solving them and you are set up for success.",
+    name: "Will Badger", role: "Product Manager, Ample Organics", relationship: "peer" },
+  { id: "wiland", tag: "craft",
+    quote: "Erik is an incredible master at scoping requirements and specifications… His ability to express intricate technical details into fully scalable enterprise solutions has provided extreme value at Ample Organics.",
+    name: "Mike Wiland", role: "infrastructure engineer, Ample Organics", relationship: "engineering colleague" },
+  { id: "laws", tag: "craft",
+    quote: "He has a remarkable ability to keep team members motivated and positive while challenging assumptions, defining requirements, and adapting to business needs. He is able to navigate complex relationships, both internally and externally, and can sling a pitch deck better than I’ve ever seen.",
+    name: "Martin Laws", role: "Founder, Low Tide Consulting", relationship: "colleague" },
+  { id: "lee", tag: "collaboration",
+    quote: "He never assumed he had the answers up front — he made real room for user insights to shape our direction, and he trusted me as a designer to explore the solution space fully before converging.",
+    name: "Joshua Lee", role: "Lead Product Designer, Compass Digital", relationship: "design partner" },
+  { id: "antaya", tag: "collaboration",
+    quote: "His coaching experience and positive attitude were an asset to the team… His strengths include keeping the team organized, motivated, and focused on tangible project milestones.",
+    name: "Matt Antaya", role: "colleague, Nascent Digital", relationship: "now Senior Engineering Manager, Discord" },
+  { id: "minhajuddin", tag: "collaboration",
+    quote: "He really understands the priorities of the product and makes sure that the team is spending resources on the most important tasks at any point. He has great leadership qualities and can rally the whole team behind a common cause.",
+    name: "Khaja Minhajuddin", role: "engineer, Ample Organics", relationship: "now Staff Software Engineer, Instacart" },
+];
+
+// Fisher–Yates shuffle (non-mutating)
+const shuffleTestimonials = (arr) => {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const t = a[i]; a[i] = a[j]; a[j] = t;
+  }
+  return a;
+};
+
+// Order the pool so no two neighbours share a tag. The constraint is circular:
+// the rotation loops and shows a sliding 2-up window, so the wrap-around pair
+// (last, first) is visible too and must also differ. With 4 tags × 3 quotes a
+// valid circular arrangement always exists.
+const orderNoAdjacentTag = (items) => {
+  const circularOk = (arr) => {
+    for (let i = 0; i < arr.length; i++) {
+      if (arr[i].tag === arr[(i + 1) % arr.length].tag) return false;
+    }
+    return true;
+  };
+  for (let attempt = 0; attempt < 500; attempt++) {
+    const candidate = shuffleTestimonials(items);
+    if (circularOk(candidate)) return candidate;
+  }
+  // Greedy fallback: always place the tag with the most remaining quotes that
+  // differs from the previously placed one.
+  const pool = shuffleTestimonials(items);
+  const result = [];
+  while (pool.length) {
+    const counts = {};
+    pool.forEach((x) => { counts[x.tag] = (counts[x.tag] || 0) + 1; });
+    const lastTag = result.length ? result[result.length - 1].tag : null;
+    let pick = -1, best = -1;
+    for (let i = 0; i < pool.length; i++) {
+      if (pool[i].tag === lastTag) continue;
+      if (counts[pool[i].tag] > best) { best = counts[pool[i].tag]; pick = i; }
+    }
+    if (pick === -1) pick = 0;
+    result.push(pool.splice(pick, 1)[0]);
+  }
+  return result;
+};
+
+const TESTIMONIAL_GAP = 32;      // px, gutter between the two desktop cards
+const TESTIMONIAL_ADVANCE = 12000; // ms between auto-advances — long enough to read a ~50-word quote
+const TESTIMONIAL_FADE = 600;     // ms crossfade duration
+
+const TestimonialCard = ({ item, minH }) => (
+  <blockquote style={{
+    margin: 0, padding: '0 0 0 28px', borderLeft: '3px solid #ff9900',
+    minHeight: minH ? minH + 'px' : undefined,
+    display: 'flex', flexDirection: 'column',
+  }}>
+    <p style={{
+      fontFamily: "'Raleway', sans-serif", fontSize: '18px', color: '#f5f0e8',
+      lineHeight: 1.7, fontStyle: 'italic', margin: '0 0 14px', fontWeight: 300,
+      flexGrow: 1,
+    }}>
+      {item.quote}
+    </p>
+    <footer style={{ fontFamily: "'Raleway', sans-serif", fontSize: '14px', color: '#9a958d' }}>
+      — {item.name}, {item.role}, {item.relationship}
+    </footer>
+  </blockquote>
 );
+
+// ── Testimonials (rotating) ───────────────────────────────────────────────────
+const Testimonials = () => {
+  const order = React.useMemo(() => orderNoAdjacentTag(TESTIMONIALS), []);
+  const N = order.length;
+
+  const getPerView = () =>
+    (typeof window !== 'undefined' && window.matchMedia('(max-width: 768px)').matches) ? 1 : 2;
+
+  const [perView, setPerView] = React.useState(getPerView);
+  const [containerW, setContainerW] = React.useState(0);
+  const [minH, setMinH] = React.useState(0);
+  const [frame, setFrame] = React.useState({ a: 0, b: 0, active: 'a' });
+  const [paused, setPaused] = React.useState(false);
+
+  const gridRef = React.useRef(null);
+  const measureRef = React.useRef(null);
+
+  // Track available width + how many cards fit
+  React.useEffect(() => {
+    const el = gridRef.current;
+    if (!el) return;
+    const update = () => { setContainerW(el.clientWidth); setPerView(getPerView()); };
+    update();
+    let ro;
+    if (typeof ResizeObserver !== 'undefined') {
+      ro = new ResizeObserver(update);
+      ro.observe(el);
+    }
+    window.addEventListener('resize', update);
+    return () => { if (ro) ro.disconnect(); window.removeEventListener('resize', update); };
+  }, []);
+
+  const cardW = perView > 1
+    ? Math.max(0, (containerW - TESTIMONIAL_GAP * (perView - 1)) / perView)
+    : containerW;
+
+  // Measure the tallest card at the current card width so height is fixed and
+  // transitions never cause layout shift.
+  React.useLayoutEffect(() => {
+    const el = measureRef.current;
+    if (!el || !cardW) return;
+    let max = 0;
+    for (const child of el.children) max = Math.max(max, child.offsetHeight);
+    if (max && Math.abs(max - minH) > 1) setMinH(max);
+  }, [cardW, perView, N]);
+
+  // Re-measure once web fonts have loaded (font swap changes wrapping/height)
+  React.useEffect(() => {
+    if (typeof document === 'undefined' || !document.fonts || !document.fonts.ready) return;
+    let cancelled = false;
+    document.fonts.ready.then(() => {
+      if (cancelled) return;
+      const el = measureRef.current;
+      if (!el || !cardW) return;
+      let max = 0;
+      for (const child of el.children) max = Math.max(max, child.offsetHeight);
+      if (max && Math.abs(max - minH) > 1) setMinH(max);
+    });
+    return () => { cancelled = true; };
+  }, [cardW]);
+
+  const go = React.useCallback((dir) => {
+    setFrame((prev) => {
+      const cur = prev.active === 'a' ? prev.a : prev.b;
+      const next = ((cur + dir) % N + N) % N;
+      return prev.active === 'a'
+        ? { a: prev.a, b: next, active: 'b' }
+        : { a: next, b: prev.b, active: 'a' };
+    });
+  }, [N]);
+
+  // Auto-advance — disabled under reduced motion or while paused
+  React.useEffect(() => {
+    if (REDUCED_MOTION || paused) return;
+    const t = setInterval(() => go(1), TESTIMONIAL_ADVANCE);
+    return () => clearInterval(t);
+  }, [paused, go]);
+
+  const measured = minH > 0;
+
+  const Row = ({ startPos }) => (
+    <div style={{
+      display: 'grid',
+      gridTemplateColumns: `repeat(${perView}, minmax(0, 1fr))`,
+      gap: TESTIMONIAL_GAP + 'px',
+      alignItems: 'stretch',
+    }}>
+      {Array.from({ length: perView }).map((_, i) => {
+        const item = order[(startPos + i) % N];
+        return <TestimonialCard key={item.id} item={item} minH={minH} />;
+      })}
+    </div>
+  );
+
+  const layerStyle = (name) => {
+    if (!measured) {
+      // Pre-measurement: render only the active layer in normal flow so the
+      // container has a real height (no collapse, no overflow flash).
+      return name === frame.active ? {} : { display: 'none' };
+    }
+    const isActive = name === frame.active;
+    return {
+      position: 'absolute', top: 0, left: 0, right: 0,
+      opacity: isActive ? 1 : 0,
+      transition: REDUCED_MOTION ? 'none' : `opacity ${TESTIMONIAL_FADE}ms ease`,
+      pointerEvents: isActive ? 'auto' : 'none',
+    };
+  };
+
+  return (
+    <FadeSection id="testimonials" className="section section-dark" data-dark-section="true" style={{ padding: '120px 32px' }}>
+      <div style={{ maxWidth: '900px', margin: '0 auto' }}>
+        <h2 className="section-header section-header-dark">What it's like working with me</h2>
+
+        <div
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => setPaused(false)}
+          onFocus={() => setPaused(true)}
+          onBlur={() => setPaused(false)}
+          style={{ marginTop: '32px' }}
+        >
+          {/* Crossfading window of quote cards */}
+          <div
+            ref={gridRef}
+            role="group"
+            aria-roledescription="carousel"
+            aria-label="Testimonials"
+            style={{ position: 'relative', height: measured ? minH + 'px' : 'auto' }}
+          >
+            <div style={layerStyle('a')}><Row startPos={frame.a} /></div>
+            <div style={layerStyle('b')}><Row startPos={frame.b} /></div>
+          </div>
+
+          {/* Prev / next controls */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '24px', marginTop: '40px' }}>
+            <button onClick={() => go(-1)} className="carousel-btn-dark" aria-label="Previous testimonials">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6" /></svg>
+            </button>
+            <button onClick={() => go(1)} className="carousel-btn-dark" aria-label="Next testimonials">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6" /></svg>
+            </button>
+          </div>
+        </div>
+
+        {/* Off-screen measurer: every quote rendered at the live card width so we
+            can fix the card height to the tallest and avoid layout shift. */}
+        <div
+          ref={measureRef}
+          aria-hidden="true"
+          style={{ position: 'absolute', top: 0, left: '-99999px', width: cardW ? cardW + 'px' : '440px', visibility: 'hidden', pointerEvents: 'none' }}
+        >
+          {TESTIMONIALS.map((item) => (
+            <TestimonialCard key={item.id} item={item} minH={0} />
+          ))}
+        </div>
+      </div>
+    </FadeSection>
+  );
+};
 
 // ── Footer ────────────────────────────────────────────────────────────────────
 const Footer = () => {
@@ -519,7 +860,7 @@ const Footer = () => {
         Made in Toronto 🇨🇦 fuelled by espresso ☕️ and built with AI 🤖
       </p>
       <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '12px 28px', fontFamily: "'Raleway', sans-serif", fontSize: '14px' }}>
-        <a href="https://www.linkedin.com/in/erik-dohnberg-019b9b65" target="_blank" rel="noopener" className="footer-link">LinkedIn</a>
+        <a href="https://www.linkedin.com/in/erik-dohnberg/" target="_blank" rel="noopener" className="footer-link">LinkedIn</a>
         <a href="https://substack.com/@heyerikd" target="_blank" rel="noopener" className="footer-link">Substack</a>
         <a href="mailto:erikdohnberg@gmail.com" className="footer-link">erikdohnberg@gmail.com</a>
       </div>
