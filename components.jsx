@@ -600,7 +600,7 @@ const TESTIMONIALS = [
     name: "Kevin McLoughlin", role: "now Chief Product Officer, Dr.Bill", relationship: "met Erik as a Bitmaker student" },
   { id: "stpierre", tag: "leadership",
     quote: "He was our first full time product manager and has worked to help build out the team and establish best practices for building products at Ample.",
-    name: "Rigel St Pierre", role: "engineering colleague, Ample Organics", relationship: "now Head of Engineering, Rootly" },
+    name: "Rigel St Pierre", role: "now Head of Engineering, Rootly", relationship: "former engineering colleague, Ample Organics" },
   { id: "badger", tag: "craft",
     quote: "His communication-first mindset to product management ensures that the right opinions are heard up front. Combine that with his focus on ruthlessly defining problems before solving them and you are set up for success.",
     name: "Will Badger", role: "Product Manager, Ample Organics", relationship: "peer" },
