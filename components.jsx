@@ -387,6 +387,25 @@ const SideProjects = () => (
 // ── Proud Work ────────────────────────────────────────────────────────────────
 const PROUD_WORK_PROJECTS = [
   {
+    title: 'ML Demand Forecasting for Compass Group\'s Kitchens',
+    tagline: 'Daily forecasts, tailored to every site – and honest about their own confidence.',
+    image: {
+      webp: 'images/compass-forecasting.webp',
+      png: 'images/compass-forecasting.png',
+      width: 1440,
+      height: 900,
+      alt: 'Concept design of Centric\'s forecasting production sheet showing item-level confidence flags and an explanation popover (sample data)',
+      caption: 'Concept design · sample data',
+    },
+    body: (
+      <>
+        Demand forecasting for Compass Group's North American kitchens. Machine-learning models train daily on each site's own sales history, so every location gets projections tailored to how it actually sells, and operators know what to prep tomorrow. I'm proudest of the trajectory: successive releases kept cutting the error rate – one by roughly 23% on core items – until an operator described the forecasts as "scary accurate."
+      </>
+    ),
+    role: '— Senior PM at Compass Digital, 2024–2026.',
+    link: { href: 'https://www.compassdigital.io/case-study/demand-forecasting-using-data-to-fight-food-waste/', label: '→ Compass Digital\'s case study on the program' },
+  },
+  {
     title: '500px\'s AI-Personalized Content Feeds',
     tagline: 'The platform\'s largest content discovery overhaul in years — shipped to a global community of 15M+ creators.',
     body: (
@@ -438,37 +457,97 @@ const PROUD_WORK_PROJECTS = [
   },
 ];
 
+// ── ProjectImage ──────────────────────────────────────────────────────────────
+// Optional carousel image slot. Only rendered for items that carry an `image`;
+// items without one render exactly as before (no placeholder, no reserved space).
+// WebP with PNG fallback, lazy-loaded, click/Enter/Space opens a larger modal.
+const ProjectImage = ({ image, onOpen }) => (
+  <figure style={{ margin: '0 0 26px' }}>
+    <button type="button" onClick={onOpen} aria-label="Open larger image"
+      className="project-image-btn"
+      style={{ display: 'block', width: '100%', padding: 0, border: 'none', background: 'none',
+        cursor: 'zoom-in', borderRadius: '8px', lineHeight: 0 }}>
+      <picture>
+        <source srcSet={image.webp} type="image/webp" />
+        <img src={image.png} alt={image.alt} width={image.width} height={image.height}
+          loading="lazy" decoding="async"
+          style={{ display: 'block', width: '100%', height: 'auto', borderRadius: '8px',
+            border: '1px solid rgba(20,14,5,0.10)', boxShadow: '0 18px 40px rgba(20,14,5,0.12)' }} />
+      </picture>
+    </button>
+    <figcaption style={{ fontFamily: "'Raleway', sans-serif", fontSize: '13px', color: '#999',
+      marginTop: '10px', letterSpacing: '.01em' }}>{image.caption}</figcaption>
+  </figure>
+);
+
+// ── ImageModal ────────────────────────────────────────────────────────────────
+// Dismiss via the X button, a click outside the image, or the ESC key.
+const ImageModal = ({ image, onClose }) => {
+  React.useEffect(() => {
+    const onKey = e => { if (e.key === 'Escape') onClose(); };
+    document.addEventListener('keydown', onKey);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.removeEventListener('keydown', onKey); document.body.style.overflow = prevOverflow; };
+  }, [onClose]);
+  return (
+    <div onClick={onClose} role="dialog" aria-modal="true" aria-label={image.alt}
+      style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(20,14,5,0.82)',
+        backdropFilter: 'blur(4px)', WebkitBackdropFilter: 'blur(4px)',
+        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+        padding: '24px' }}>
+      <button onClick={onClose} aria-label="Close image"
+        style={{ position: 'fixed', top: '20px', right: '24px', width: '40px', height: '40px',
+          border: 'none', borderRadius: '50%', background: 'rgba(255,255,255,.12)', color: '#f5f0e8',
+          cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }}>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18M6 6l12 12" /></svg>
+      </button>
+      <figure onClick={e => e.stopPropagation()} style={{ margin: 0, display: 'flex', flexDirection: 'column',
+        alignItems: 'center', gap: '12px', maxWidth: 'min(1200px, 96vw)', maxHeight: '92vh' }}>
+        <picture>
+          <source srcSet={image.webp} type="image/webp" />
+          <img src={image.png} alt={image.alt}
+            style={{ display: 'block', maxWidth: '100%', maxHeight: '82vh', width: 'auto', height: 'auto',
+              objectFit: 'contain', borderRadius: '8px', boxShadow: '0 30px 70px rgba(0,0,0,.55)' }} />
+        </picture>
+        <figcaption style={{ fontFamily: "'Raleway', sans-serif", fontSize: '13px', color: '#c9c3b8', textAlign: 'center' }}>{image.caption}</figcaption>
+      </figure>
+    </div>
+  );
+};
+
+// ── Proud Work ────────────────────────────────────────────────────────────────
 const ProudWork = () => {
   const [idx, setIdx] = React.useState(0);
+  const [modalOpen, setModalOpen] = React.useState(false);
   const total = PROUD_WORK_PROJECTS.length;
   const project = PROUD_WORK_PROJECTS[idx];
+  const go = React.useCallback(next => { setModalOpen(false); setIdx(next); }, []);
   return (
     <FadeSection id="proud" className="section section-light" style={{ padding: '120px 32px' }}>
       <div style={{ maxWidth: '880px', margin: '0 auto' }}>
         <IteratedTitle draft="Selected Work" final="Some work I'm proud of" />
         <p className="body-text" style={{ marginBottom: '48px', marginTop: '8px', maxWidth: '640px' }}>
-          Four industries. Real products that shipped, with real teams.
+          Real products that shipped, with real teams.
         </p>
-        {/* TODO: Restore two-column grid (screenshot + text) once real screenshots are added.
-             Add: <div style={{ aspectRatio:'4/3', borderRadius:'6px', overflow:'hidden', boxShadow:'0 18px 40px rgba(20,14,5,0.12)' }}>
-                    <img src="images/<project>.png" alt="..." style={{ width:'100%', height:'100%', objectFit:'cover' }} />
-                  </div> */}
         <div key={idx + '-txt'} style={{ maxWidth: '640px', animation: 'txtIn 0.5s ease' }}>
+          {project.image && <ProjectImage image={project.image} onOpen={() => setModalOpen(true)} />}
           <h3 style={{ fontFamily: "'Sanchez', serif", fontSize: '28px', color: '#333', margin: '0 0 6px' }}>{project.title}</h3>
           <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: '15px', color: '#999', fontStyle: 'italic', margin: '0 0 22px' }}>{project.tagline}</p>
           <p className="body-text" style={{ marginBottom: '20px' }}>{project.body}</p>
           <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: '14px', color: '#888', margin: '0 0 16px', fontStyle: 'italic' }}>{project.role}</p>
           {project.link && <a href={project.link.href} target="_blank" rel="noopener" className="inline-link">{project.link.label}</a>}
         </div>
+        {modalOpen && project.image && <ImageModal image={project.image} onClose={() => setModalOpen(false)} />}
         {/* Carousel nav */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '24px', marginTop: '56px' }}>
-          <button onClick={() => setIdx(i => (i - 1 + total) % total)} className="carousel-btn" aria-label="Previous">
+          <button onClick={() => go((idx - 1 + total) % total)} className="carousel-btn" aria-label="Previous">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6" /></svg>
           </button>
           <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: '14px', color: '#888', minWidth: '40px', textAlign: 'center' }}>
             {idx + 1}/{total}
           </span>
-          <button onClick={() => setIdx(i => (i + 1) % total)} className="carousel-btn" aria-label="Next">
+          <button onClick={() => go((idx + 1) % total)} className="carousel-btn" aria-label="Next">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6" /></svg>
           </button>
         </div>
