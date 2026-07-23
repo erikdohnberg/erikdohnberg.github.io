@@ -622,7 +622,7 @@ const TESTIMONIALS = [
 ];
 
 // Auto-advance interval and crossfade duration (ms).
-const TESTIMONIAL_ADVANCE = 12000; // long enough to read a ~50-word quote
+const TESTIMONIAL_ADVANCE = 8000; // one quote at a time reads faster than the old 2-up
 const TESTIMONIAL_FADE = 200;
 
 // Filter-tab labels and the kicker shown above each quote, keyed by tag.
